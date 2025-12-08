@@ -14,6 +14,14 @@ class UserController extends Controller
     {
         return view('login');
     }
+    public function register()
+    {
+        return view('register');
+    }
+    public function forgotPassword()
+    {
+        return view('forgot-password');
+    }
 
     /**
      * Show the form for creating a new resource.
