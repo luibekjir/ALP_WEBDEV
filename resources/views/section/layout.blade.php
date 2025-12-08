@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+    <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -37,7 +37,7 @@
         </button>
 
         <!-- MAIN MENU -->
-        <ul id="menuList" class="hidden lg:flex gap-10 text-lg font-semibold">
+        <ul id="menuList" class="hidden lg:flex gap-10 text-lg font-semibold items-center">
             
             <!-- Dropdown Item -->
             <li class="relative group">
@@ -55,6 +55,42 @@
             <li class="relative group">
                 <button class="relative nav-hover pb-1 text-black">Event</button>
             </li>
+
+            <!-- Profile / Auth Section -->
+            @if(auth()->check())
+                <li class="relative group">
+                    <a href="/profile" class="flex items-center gap-2 relative nav-hover pb-1 text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                        </svg>
+                        Profile
+                    </a>
+                    <!-- Dropdown Menu -->
+                    {{-- <div class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto z-50">
+                        <a href="{{ route('profile.show', auth()->user()->id) }}" class="block px-4 py-3 hover:bg-[#FFD9DC] rounded-t-lg">
+                            👤 Lihat Profil
+                        </a>
+                        <a href="{{ route('profile.edit', auth()->user()->id) }}" class="block px-4 py-3 hover:bg-[#FFD9DC]">
+                            ✏️ Edit Profil
+                        </a>
+                        <form action="{{ route('logout') }}" method="POST" class="block">
+                            @csrf
+                            <button type="submit" class="w-full text-left px-4 py-3 hover:bg-[#FFD9DC] rounded-b-lg text-red-600 font-semibold">
+                                🚪 Logout
+                            </button>
+                        </form>
+                    </div> --}}
+                </li>
+            @else
+                <li class="relative group">
+                    <a href="/login" class="flex items-center gap-2 relative nav-hover pb-1 text-black">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                        </svg>
+                        Login
+                    </a>
+                </li>
+            @endif
         </ul>
     </div>
 </nav>
