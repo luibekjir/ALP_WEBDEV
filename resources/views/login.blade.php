@@ -1,6 +1,6 @@
-{{-- @extends('layouts.app') --}}
+@extends('section.layout')
 
-{{-- @section('content') --}}
+@section('content')
 <!doctype html>
 <html lang="en">
 
@@ -152,8 +152,13 @@
         <main class="login-card" role="main">
             <h1>Masuk</h1>
             <p class="lead">Silakan masuk menggunakan akun Anda.</p>
-
-            <form method="POST" action="">
+            
+            @if (session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            <form method="POST" action="{{ route('login') }}">
                 @csrf
 
                 <div>

@@ -1,6 +1,6 @@
-{{-- @extends('layouts.app') --}}
+@extends('section.layout')
 
-{{-- @section('content') --}}
+@section('content')
 <!doctype html>
 <html lang="en">
 <head>
@@ -40,10 +40,10 @@
 
                 <div class="helper-links">
                     <div>
-                        <a href="{{ route('login') }}" style="color:#111827; text-decoration:underline;">Kembali ke Masuk</a>
+                        <a href="/login" style="color:#111827; text-decoration:underline;">Kembali ke Masuk</a>
                     </div>
                     <div>
-                        <a href="{{ route('register') }}" style="color:#111827; text-decoration:underline;">Buat akun baru</a>
+                        <a href="/register" style="color:#111827; text-decoration:underline;">Buat akun baru</a>
                     </div>
                 </div>
             </form>
@@ -51,4 +51,4 @@
     </div>
 </body>
 </html>
-{{-- @endsection --}}
+@endsection
