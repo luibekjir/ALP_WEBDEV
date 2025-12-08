@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->int('user_id');
-            $table->int('total_price');
+            $table->integer('user_id');
+            $table->integer('total_price');
             // $table->enum('status', ['']); blm pasti statusnya apa aja
-            $table->int('created_at');
-            $table->int('notes');
+            $table->timestamps();
+            $table->integer('notes');
         });
     }
 
