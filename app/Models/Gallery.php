@@ -3,13 +3,17 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Gallery extends Model
 {
+
+    Use HasFactory;
+
     protected $fillable = [
         'image_url',
         'title',
-        'decription',
+        'description',
         'created_by',
         'updated_by',
         'like_id',

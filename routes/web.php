@@ -11,9 +11,15 @@ Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/about', [HomeController::class, 'about']);
 
-Route::get('/product', [ProductController::class, 'index']); 
-
 Route::get('/gallery', [GalleryController::class, 'index']);
+Route::get('/gallery/create', [GalleryController::class, 'create']);
+Route::post('/gallery', [GalleryController::class, 'store']);
+Route::get('/gallery/{gallery}', [GalleryController::class, 'show']);
+Route::get('/gallery/{gallery}/edit', [GalleryController::class, 'edit']);
+Route::put('/gallery/{gallery}', [GalleryController::class, 'update']);
+Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy']);
+
+
 
 Route::get('/event', [EventController::class, 'index']);
 

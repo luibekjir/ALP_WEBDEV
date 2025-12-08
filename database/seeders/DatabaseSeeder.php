@@ -7,6 +7,10 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str; 
 use Illuminate\Support\Facades\DB;
+use Database\Seeders\CategorySeeder;
+use Database\Seeders\ProductSeeder;
+use Database\Seeders\GallerySeeder;
+use Database\Seeders\EventSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -32,6 +36,8 @@ DB::statement('PRAGMA foreign_keys=OFF;');
 $this->call([
     CategorySeeder::class,
     ProductSeeder::class,
+    GallerySeeder::class,
+    EventSeeder::class,
 ]);
 
 DB::statement('PRAGMA foreign_keys=ON;');

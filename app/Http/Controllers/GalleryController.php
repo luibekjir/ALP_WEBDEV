@@ -15,34 +15,32 @@ class GalleryController extends Controller
 
     public function create()
     {
-        return view('galleries.create');
+        return view('gallery');
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image',
+         Gallery::create([
+            'image_url' => $request->file('image')->store('galleries'),
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+            'created_by' => $request->input('created_by'),
+            'updated_by' => $request->input('updated_by'),
+            'like_id' => 'like_id',
+            'comment_id' => 'comment_id'
         ]);
 
-        if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('galleries');
-        }
-
-        Gallery::create($validated);
-
-        return redirect()->route('galleries.index')->with('success', 'Gallery created successfully.');
+        return redirect('/galeri');
     }
 
     public function show(Gallery $gallery)
     {
-        return view('galleries.show', compact('gallery'));
+        return view('gallery.show', compact('gallery'));
     }
 
     public function edit(Gallery $gallery)
     {
-        return view('galleries.edit', compact('gallery'));
+        return view('gallery.edit', compact('gallery'));
     }
 
     public function update(Request $request, Gallery $gallery)
@@ -59,13 +57,13 @@ class GalleryController extends Controller
 
         $gallery->update($validated);
 
-        return redirect()->route('galleries.index')->with('success', 'Gallery updated successfully.');
+        return redirect()->route('gallery.index')->with('success', 'Gallery updated successfully.');
     }
 
     public function destroy(Gallery $gallery)
     {
         $gallery->delete();
 
-        return redirect()->route('galleries.index')->with('success', 'Gallery deleted successfully.');
+        return redirect()->route('gallery.index')->with('success', 'Gallery deleted successfully.');
     }
 }
