@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\Product;
+use App\Models\Category;
 
 class ProductSeeder extends Seeder
 {
@@ -12,6 +14,9 @@ class ProductSeeder extends Seeder
      */
     public function run(): void
     {
-        //
-    }
+$category = Category::first(); // ambil kategori pertama yang pasti ada
+Product::factory()->count(10)->create([
+    'category_id' => $category->id,
+]);
+}
 }

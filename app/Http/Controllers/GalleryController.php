@@ -1,0 +1,76 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Gallery;
+
+class GalleryController extends Controller
+{
+    public function index()
+    {
+        $gallery = Gallery::all();
+        return view('gallery', compact('gallery'));
+    }
+
+    public function create()
+    {
+        return view('gallery');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|max:2048',
+    ]);
+
+    $gallery = new Gallery();
+    $gallery->title = $request->name;
+    $gallery->description = $request->description;
+    
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('gallery', 'public');
+        $gallery->image_url = $path;
+    }
+
+    $gallery->save();
+
+    return redirect()->back()->with('success', 'Koleksi berhasil ditambahkan!');
+    }
+
+    public function show(Gallery $gallery)
+    {
+        return view('gallery.show', compact('gallery'));
+    }
+
+    public function edit(Gallery $gallery)
+    {
+        return view('gallery.edit', compact('gallery'));
+    }
+
+    public function update(Request $request, Gallery $gallery)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('galleries');
+        }
+
+        $gallery->update($validated);
+
+        return redirect()->route('gallery.index')->with('success', 'Gallery updated successfully.');
+    }
+
+    public function destroy(Gallery $gallery)
+    {
+        $gallery->delete();
+
+        return redirect()->route('gallery.index')->with('success', 'Gallery deleted successfully.');
+    }
+}

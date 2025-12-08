@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('image_url');
             $table->string('title');
             $table->text('description');
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('like_id')->nullable();
+            $table->unsignedBigInteger('comment_id')->nullable();
             $table->timestamps();
         });
     }
