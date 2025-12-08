@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->int('price');
+            $table->integer('price');
             // $table->int('category_id'); pnya foreign key category_id
-            $table->int('stock');
-            $table->date('created_at');
+            $table->integer('stock');
+            $table->timestamps();
         });
     }
 

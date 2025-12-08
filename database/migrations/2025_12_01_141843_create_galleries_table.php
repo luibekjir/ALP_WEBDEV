@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('image_url');
             $table->string('title');
             $table->text('description');
-            $table->dateint('created_at');
+            $table->timestamps();
         });
     }
 
