@@ -20,17 +20,24 @@ class GalleryController extends Controller
 
     public function store(Request $request)
     {
-         Gallery::create([
-            'image_url' => $request->file('image')->store('galleries'),
-            'title' => $request->input('title'),
-            'description' => $request->input('description'),
-            'created_by' => $request->input('created_by'),
-            'updated_by' => $request->input('updated_by'),
-            'like_id' => 'like_id',
-            'comment_id' => 'comment_id'
-        ]);
+        $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|max:2048',
+    ]);
 
-        return redirect('/galeri');
+    $gallery = new Gallery();
+    $gallery->title = $request->name;
+    $gallery->description = $request->description;
+    
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('gallery', 'public');
+        $gallery->image_url = $path;
+    }
+
+    $gallery->save();
+
+    return redirect()->back()->with('success', 'Koleksi berhasil ditambahkan!');
     }
 
     public function show(Gallery $gallery)

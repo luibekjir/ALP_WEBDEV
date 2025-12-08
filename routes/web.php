@@ -12,16 +12,14 @@ Route::get('/', [HomeController::class, 'index']);
 Route::get('/about', [HomeController::class, 'about']);
 
 Route::get('/gallery', [GalleryController::class, 'index']);
-Route::get('/gallery/create', [GalleryController::class, 'create']);
-Route::post('/gallery', [GalleryController::class, 'store']);
-Route::get('/gallery/{gallery}', [GalleryController::class, 'show']);
-Route::get('/gallery/{gallery}/edit', [GalleryController::class, 'edit']);
-Route::put('/gallery/{gallery}', [GalleryController::class, 'update']);
-Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy']);
+Route::post('/gallery', [GalleryController::class, 'store']) ->name('gallery.store');
 
+Route::get('/product', [ProductController::class, 'index']);
+Route::post('/product', [ProductController::class, 'store'])->name('product.store');
 
 
 Route::get('/event', [EventController::class, 'index']);
+Route::post('/event', [EventController::class, 'store'])->name('event.store');
 
 // Route::get('/', [HomeController::class, 'index'])->middleware('admin');
 

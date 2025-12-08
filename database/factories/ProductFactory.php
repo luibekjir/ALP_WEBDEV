@@ -30,6 +30,7 @@ if (!$category) {
     $category = \App\Models\Category::factory()->create();
 }
         return [
+            'image_url'   => $this->faker->imageUrl(800, 600, 'nature', true),
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
             'price' => $this->faker->randomFloat(2, 100, 10000),

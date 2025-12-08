@@ -4,33 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Models\Category;
 
 class ProductController extends Controller
 {
     public function index()
     {
         $products = Product::all();
-        return view('product', compact('products'));
+        $categories = Category::all();
+        return view('product', compact('products', 'categories'));
     }
 
     public function create()
     {
-        return view('products.create');
+        return view('product');
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'category_id' => 'required|integer|exists:categories,id',
-            'stock' => 'required|integer|min:0',
-        ]);
+         $request->validate([
+        'image' => 'nullable|image|max:2048',
+        'name' => 'required|string|max:255',
+        'category_id' => 'required|exists:categories,id',
+        'price' => 'required|numeric',
+        'description' => 'nullable|string',
+        'image' => 'nullable|image|max:2048',
+        'stock' => 'required|numeric',
+    ]);
 
-        Product::create($validated);
+    $product = new Product();
+    $product->name = $request->name;
+    $product->category_id = $request->category_id;
+    $product->price = $request->price;
+    $product->stock = $request->stock;
+    $product->description = $request->description;
 
-        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+    if ($request->hasFile('image')) {
+        $path = $request->file('image')->store('products', 'public');
+        $product->image_url = $path;
+    }
+
+    $product->save();
+
+    return redirect()->back()->with('success', 'Produk berhasil ditambahkan!');
     }
 
     public function show(Product $product)

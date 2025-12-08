@@ -15,21 +15,31 @@ class EventController extends Controller
 
     public function create()
     {
-        return view('events.create');
+        return view('event');
     }
 
     public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'date' => 'required|date',
-        ]);
+{
+    // Validasi input
+    $validated = $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'nullable|string',
+        'date' => 'required|date',
+        'price' => 'nullable|numeric|min:0',
+        'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ]);
 
-        Event::create($validated);
-
-        return redirect()->route('events.index')->with('success', 'Event created successfully.');
+    // Upload gambar jika ada
+    if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('events', 'public');
+        $validated['image_url'] = $imagePath;
     }
+
+    // Simpan ke database
+    Event::create($validated);
+
+    return redirect()->back()->with('success', 'Event berhasil ditambahkan!');
+}
 
     public function show(Event $event)
     {
