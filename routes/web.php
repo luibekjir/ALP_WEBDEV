@@ -7,9 +7,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
 
-Route::get('/', function () {
-    return view('aboutus');
-})->name('aboutus');
+Route::get('/', [HomeController::class, 'index']);
+Route::get('/aboutus', [HomeController::class, 'about']);
 
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::post('/gallery', [GalleryController::class, 'store']) ->name('gallery.store');

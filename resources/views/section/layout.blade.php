@@ -102,47 +102,22 @@
 
     <details class="group">
         <summary class="cursor-pointer text-lg py-2">About Us</summary>
-        <div class="pl-4 text-sm space-y-1">
-            <a href="#" class="block">Company Overview</a>
-            <a href="#" class="block">Our History</a>
-            <a href="#" class="block">Leadership</a>
-        </div>
     </details>
 
     <details class="group">
-        <summary class="cursor-pointer text-lg py-2">Corporate Governance</summary>
-        <div class="pl-4 text-sm space-y-1">
-            <a href="#">Policies</a>
-            <a href="#">Ethics & Compliance</a>
-            <a href="#">Transparency Report</a>
-        </div>
+        <summary class="cursor-pointer text-lg py-2">Gallery</summary>
     </details>
 
     <details class="group">
-        <summary class="cursor-pointer text-lg py-2">Mining Assets</summary>
-        <div class="pl-4 text-sm space-y-1">
-            <a href="#">Active Sites</a>
-            <a href="#">Production Data</a>
-            <a href="#">Logistics</a>
-        </div>
+        <summary class="cursor-pointer text-lg py-2">Product</summary>
     </details>
 
     <details class="group">
-        <summary class="cursor-pointer text-lg py-2">Project Data</summary>
-        <div class="pl-4 text-sm space-y-1">
-            <a href="#">Ongoing Projects</a>
-            <a href="#">Completed Projects</a>
-            <a href="#">Future Plans</a>
-        </div>
+        <summary class="cursor-pointer text-lg py-2">Event</summary>
     </details>
 
     <details class="group">
-        <summary class="cursor-pointer text-lg py-2">Investor Relation</summary>
-        <div class="pl-4 text-sm space-y-1">
-            <a href="#">Financial Reports</a>
-            <a href="#">Annual Statements</a>
-            <a href="#">Contact Investor Team</a>
-        </div>
+        <summary class="cursor-pointer text-lg py-2">Profile</summary>
     </details>
 </div>
 
