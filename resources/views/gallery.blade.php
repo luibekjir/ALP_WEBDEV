@@ -17,12 +17,15 @@
                 <p class="text-[#5F1D2A]/70 text-sm sm:text-base">
                     Menampilkan <span class="font-bold">{{ $gallery->count() }}</span> koleksi
                 </p>
-                <div class="flex justify-end mb-6">
-                    <button id="openCreateModal"
-                        class="bg-[#5F1D2A] text-white px-4 py-2 rounded-lg hover:bg-[#4a1620] transition">
-                        Tambah Koleksi Baru
-                    </button>
-                </div>
+
+                @if (Auth::check() && Auth::user()->role === 'admin')
+                    <div class="flex justify-end mb-6">
+                        <button id="openCreateModal"
+                            class="bg-[#5F1D2A] text-white px-4 py-2 rounded-lg hover:bg-[#4a1620] transition">
+                            Tambah Koleksi Baru
+                        </button>
+                    </div>
+                @endif
                 <form action="{{ url()->current() }}" method="GET" class="flex items-center gap-2">
                     <label for="sort" class="text-[#5F1D2A] font-medium">Urutkan:</label>
                     <select name="sort" id="sort" onchange="this.form.submit()"

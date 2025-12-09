@@ -116,6 +116,15 @@ class UserController extends Controller
 
         return back()->withErrors(['email' => __($status)]);
     }
+
+    public function logout(Request $request){
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('');
+
+    }
     /**
      * Store a newly created resource in storage.
      */

@@ -41,19 +41,19 @@
             
             <!-- Dropdown Item -->
             <li class="relative group">
-                <button class="relative nav-hover pb-1 text-black">About Us</button>
+                <a href="/" class="relative nav-hover pb-1 text-black">About Us</a>
             </li>
 
             <li class="relative group">
-                <button class="relative nav-hover pb-1 text-black">Gallery</button>
+                <a href="/gallery" class="relative nav-hover pb-1 text-black">Gallery</a>
             </li>
 
             <li class="relative group">
-                <button class="relative nav-hover pb-1 text-black">Product</button>
+                <a href="/product" class="relative nav-hover pb-1 text-black">Product</a>
             </li>
 
             <li class="relative group">
-                <button class="relative nav-hover pb-1 text-black">Event</button>
+                <a href="/event" class="relative nav-hover pb-1 text-black">Event</a>
             </li>
 
             <!-- Profile / Auth Section -->
@@ -129,7 +129,8 @@
     });
 </script>
 
-<div class="mt-40">
+<div class="mt-20">
+    <h1>@yield('pagetitle')</h1>
     @yield('content')
 </div>
 

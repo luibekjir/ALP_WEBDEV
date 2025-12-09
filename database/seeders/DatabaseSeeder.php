@@ -38,6 +38,7 @@ $this->call([
     ProductSeeder::class,
     GallerySeeder::class,
     EventSeeder::class,
+    UserSeeder::class
 ]);
 
 DB::statement('PRAGMA foreign_keys=ON;');
