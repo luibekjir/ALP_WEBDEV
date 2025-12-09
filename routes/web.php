@@ -12,7 +12,7 @@ Route::get('/', function () {
 })->name('aboutus');
 
 Route::get('/gallery', [GalleryController::class, 'index']);
-Route::post('/gallery', [GalleryController::class, 'store']) ->name('gallery.store');
+Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store');
 
 Route::get('/product', [ProductController::class, 'index']);
 Route::post('/product', [ProductController::class, 'store'])->name('product.store');

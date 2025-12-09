@@ -14,12 +14,14 @@
             <div class="flex flex-col lg:flex-row gap-8">
 
                 {{-- Button untuk membuka modal --}}
+                @if (Auth::check() && Auth::user()->role === 'admin')
                 <div class="fixed bottom-8 right-8">
                     <button id="openProductModal"
                         class="bg-[#5F1D2A] text-white px-5 py-3 rounded-full shadow-lg hover:bg-[#4a1620] transition">
                         + Tambah Produk
                     </button>
                 </div>
+                @endif
 
                 {{-- Sidebar Kategori --}}
                 <aside class="w-full lg:w-1/4">
