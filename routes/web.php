@@ -7,18 +7,18 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
 
 Route::get('/gallery', [GalleryController::class, 'index']);
-Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store');
+Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store')->middleware('admin');
 
 Route::get('/product', [ProductController::class, 'index']);
-Route::post('/product', [ProductController::class, 'store'])->name('product.store');
+Route::post('/product', [ProductController::class, 'store'])->name('product.store')->middleware('admin');
 
 
 Route::get('/event', [EventController::class, 'index']);
-Route::post('/event', [EventController::class, 'store'])->name('event.store');
+Route::post('/event', [EventController::class, 'store'])->name('event.store')->middleware('admin');
 
 // Route::get('/', [HomeController::class, 'index'])->middleware('admin');
 
