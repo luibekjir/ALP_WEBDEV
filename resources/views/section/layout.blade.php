@@ -6,6 +6,7 @@
     <title>@yield('title', 'Batik Bulau Sayang')</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    @livewireStyles
 
     <style>
         /* Hover underline animation */
@@ -145,6 +146,6 @@
     <h1>@yield('pagetitle')</h1>
     @yield('content')
 </div>
-
+@livewireScripts
 </body>
 </html>
