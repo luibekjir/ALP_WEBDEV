@@ -152,19 +152,21 @@
             <main class="login-card" role="main">
                 <h1>Masuk</h1>
                 <p class="lead">Silakan masuk menggunakan akun Anda.</p>
-
-                @if (session('success'))
-                    <div class="alert alert-success">
-                        {{ session('success') }}
+                @error('email')
+                    <div class="text-red-500">
+                        {{ $message }}
+                    </div>
+                @enderror
+                @if (session('message'))
+                    <div class="text-red-500">
+                        {{ session('message') }}
                     </div>
                 @endif
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
-                    @error('email')
-                        <div class="text-red-500">
-                            {{ $message }}
-                        </div>
-                    @enderror
+
+
+
 
                     <div>
                         <label for="email">Email</label>
