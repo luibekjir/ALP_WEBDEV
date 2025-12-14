@@ -78,25 +78,106 @@
                     </div> --}}
                     </div>
 
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <button onclick="openEditModal()" 
-                       class="flex-1 bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold text-center">
-                        Edit Profil
-                    </button>
-                    {{-- <a href="{{ route('profile.change-password', $user->id) }}" 
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="openEditModal()"
+                            class="flex-1 bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold text-center">
+                            Edit Profil
+                        </button>
+                        {{-- <a href="{{ route('profile.change-password', $user->id) }}" 
                        class="flex-1 border-2 border-[#5F1D2A] text-[#5F1D2A] px-6 py-3 rounded-lg hover:bg-[#F8D9DF] transition font-semibold text-center">
                         Ubah Password
                     </a> --}}
-                    <form action="{{ route('logout') }}" method="POST" class="flex-1">
-                        @csrf
-                        <button type="submit" 
+                        <form action="{{ route('logout') }}" method="POST" class="flex-1">
+                            @csrf
+                            <button type="submit"
                                 class="w-full border-2 border-red-500 text-red-500 px-6 py-3 rounded-lg hover:bg-red-50 transition font-semibold">
                                 Logout
                             </button>
                         </form>
                     </div>
                 </div>
+
+
+                {{-- ORDER HISTORY --}}
+                <div class="bg-white border border-[#B8A5A8] rounded-xl shadow-md p-8 mb-8">
+                    <h3 class="text-xl font-bold text-[#5F1D2A] mb-6">
+                        Riwayat Pesanan
+                    </h3>
+
+                    @if ($orders->isEmpty())
+                        <div class="text-center py-10 text-[#5F1D2A]/60">
+                            <p>Belum ada pesanan</p>
+                        </div>
+                    @else
+                        <div class="space-y-6">
+                            @foreach ($orders as $order)
+                                <div class="border border-[#B8A5A8]/30 rounded-xl p-6">
+
+                                    {{-- HEADER --}}
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <p class="font-semibold text-[#5F1D2A]">
+                                                Order #{{ $order->id }}
+                                            </p>
+                                            <p class="text-sm text-[#5F1D2A]/60">
+                                                {{ $order->created_at->format('d M Y, H:i') }}
+                                            </p>
+                                        </div>
+
+                                        {{-- STATUS --}}
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-semibold
+                            @if ($order->status === 'pending') bg-yellow-100 text-yellow-700
+                            @elseif($order->status === 'paid') bg-green-100 text-green-700
+                            @elseif($order->status === 'shipped') bg-blue-100 text-blue-700
+                            @else bg-gray-100 text-gray-700 @endif
+                        ">
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+                                    </div>
+
+                                    {{-- ITEMS --}}
+                                    <div class="space-y-2 mb-4">
+                                        @foreach ($order->items as $item)
+                                            <div class="flex justify-between text-sm">
+                                                <span>
+                                                    {{ $item->product->name }} × {{ $item->quantity }}
+                                                </span>
+                                                <span>
+                                                    Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+
+                                    {{-- TOTAL --}}
+                                    <div class="flex justify-between items-center border-t pt-4">
+                                        <span class="font-semibold text-[#5F1D2A]">
+                                            Total
+                                        </span>
+                                        <span class="font-bold text-[#5F1D2A] text-lg">
+                                            Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+
+                                    {{-- ACTION --}}
+                                    {{-- NEXT STEP --}}
+                                    
+                    <div class="mt-4 text-right">
+                        <a href="{{ route('orders.detail', $order) }}"
+                           class="text-[#5F1D2A] hover:underline font-semibold">
+                            Lihat Detail
+                        </a>
+                    </div>
+                   
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
 
                 <!-- Security Section -->
                 <div class="bg-white border border-[#B8A5A8] rounded-xl shadow-md p-8">
@@ -128,7 +209,8 @@
                         <form action="{{ route('profile.change-password', $user) }}" method="POST">
                             @csrf
                             @method('PUT')
-                            <button type="submit" id="change-password" class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">Ubah</button>
+                            <button type="submit" id="change-password"
+                                class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">Ubah</button>
                         </form>
                     </div>
 
@@ -137,129 +219,135 @@
                             <p class="font-semibold text-[#5F1D2A]">Email</p>
                             <p class="text-sm text-[#5F1D2A]/70">{{ $user->email }}</p>
                         </div>
-                        {{-- <span class="text-green-600 font-semibold">✓ Terverifikasi</span> --}}
-                    {{-- </div> --}}
+                        <span class="text-green-600 font-semibold">✓ Terverifikasi</span>
+                    </div> --}}
                 </div>
             </div>
 
         </div>
     </div>
-</div>
+    </div>
 
-<!-- Edit Profile Modal -->
-<div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <!-- Modal Header -->
-            <div class="bg-gradient-to-r from-[#F8D9DF] to-[#FFD9DC] px-6 py-4 rounded-t-xl">
-                <div class="flex items-center justify-between">
-                    <h3 class="text-xl font-bold text-[#5F1D2A]">Edit Profil</h3>
-                    <button onclick="closeEditModal()" class="text-[#5F1D2A] hover:text-[#4a1620] text-2xl">&times;</button>
+    <!-- Edit Profile Modal -->
+    <div id="editModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+                <!-- Modal Header -->
+                <div class="bg-gradient-to-r from-[#F8D9DF] to-[#FFD9DC] px-6 py-4 rounded-t-xl">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-bold text-[#5F1D2A]">Edit Profil</h3>
+                        <button onclick="closeEditModal()"
+                            class="text-[#5F1D2A] hover:text-[#4a1620] text-2xl">&times;</button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6">
+
+                        @if ($errors->any())
+                            <div class="mb-4 p-3 bg-red-100 text-red-800 rounded-lg">
+                                <ul class="list-disc list-inside">
+                                    @foreach ($errors->all() as $error)
+                                        <li>{{ $error }}</li>
+                                    @endforeach
+                                </ul>
+                            </div>
+                        @endif
+
+                        <form action="{{ route('profile.update', $user) }}" method="POST" class="space-y-4">
+                            @csrf
+                            @method('PUT')
+
+                            <!-- Name -->
+                            <div>
+                                <label for="name" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nama
+                                    Lengkap</label>
+                                <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
+                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
+                                    required>
+                                @error('name')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Email -->
+                            <div>
+                                <label for="email" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Email</label>
+                                <input type="email" id="email" name="email"
+                                    value="{{ old('email', $user->email) }}"
+                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
+                                    required>
+                                @error('email')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Phone -->
+                            <div>
+                                <label for="phone" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nomor
+                                    Telepon</label>
+                                <input type="tel" id="phone" name="phone"
+                                    value="{{ old('phone', $user->phone) }}"
+                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
+                                    placeholder="Contoh: 081234567890">
+                                @error('phone')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Address -->
+                            <div>
+                                <label for="address" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat
+                                    Lengkap</label>
+                                <textarea id="address" name="address" rows="4"
+                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent resize-none"
+                                    placeholder="Masukkan alamat lengkap Anda">{{ old('address', $user->address) }}</textarea>
+                                @error('address')
+                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Modal Footer -->
+                            <div class="flex gap-3 pt-4 border-t border-[#B8A5A8]/20">
+                                <button type="button" onclick="closeEditModal()"
+                                    class="flex-1 border-2 border-[#B8A5A8] text-[#5F1D2A] px-6 py-3 rounded-lg hover:bg-[#F8D9DF] transition font-semibold">
+                                    Batal
+                                </button>
+                                <button type="submit"
+                                    class="flex-1 bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold">
+                                    Simpan Perubahan
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-
-            <!-- Modal Body -->
-            <div class="p-6">
-
-                @if($errors->any())
-                    <div class="mb-4 p-3 bg-red-100 text-red-800 rounded-lg">
-                        <ul class="list-disc list-inside">
-                            @foreach($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
-
-                <form action="{{ route('profile.update', $user) }}" method="POST" class="space-y-4">
-                    @csrf
-                    @method('PUT')
-
-                    <!-- Name -->
-                    <div>
-                        <label for="name" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nama Lengkap</label>
-                        <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
-                               class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
-                               required>
-                        @error('name')
-                            <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Email -->
-                    <div>
-                        <label for="email" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Email</label>
-                        <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
-                               class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
-                               required>
-                        @error('email')
-                            <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Phone -->
-                    <div>
-                        <label for="phone" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nomor Telepon</label>
-                        <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
-                               class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
-                               placeholder="Contoh: 081234567890">
-                        @error('phone')
-                            <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Address -->
-                    <div>
-                        <label for="address" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat Lengkap</label>
-                        <textarea id="address" name="address" rows="4"
-                                  class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent resize-none"
-                                  placeholder="Masukkan alamat lengkap Anda">{{ old('address', $user->address) }}</textarea>
-                        @error('address')
-                            <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                        @enderror
-                    </div>
-
-                    <!-- Modal Footer -->
-                    <div class="flex gap-3 pt-4 border-t border-[#B8A5A8]/20">
-                        <button type="button" onclick="closeEditModal()"
-                                class="flex-1 border-2 border-[#B8A5A8] text-[#5F1D2A] px-6 py-3 rounded-lg hover:bg-[#F8D9DF] transition font-semibold">
-                            Batal
-                        </button>
-                        <button type="submit"
-                                class="flex-1 bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold">
-                            Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
-    </div>
-</div>
 
-<script>
-// Modal functions
-function openEditModal() {
-    document.getElementById('editModal').classList.remove('hidden');
-    document.body.style.overflow = 'hidden';
-}
+        <script>
+            // Modal functions
+            function openEditModal() {
+                document.getElementById('editModal').classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
 
-function closeEditModal() {
-    document.getElementById('editModal').classList.add('hidden');
-    document.body.style.overflow = 'auto';
-}
+            function closeEditModal() {
+                document.getElementById('editModal').classList.add('hidden');
+                document.body.style.overflow = 'auto';
+            }
 
-// Close modal when clicking outside
-document.getElementById('editModal').addEventListener('click', function(e) {
-    if (e.target === this) {
-        closeEditModal();
-    }
-});
+            // Close modal when clicking outside
+            document.getElementById('editModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeEditModal();
+                }
+            });
 
-// Close modal with Escape key
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape' && !document.getElementById('editModal').classList.contains('hidden')) {
-        closeEditModal();
-    }
-});
-</script>
+            // Close modal with Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !document.getElementById('editModal').classList.contains('hidden')) {
+                    closeEditModal();
+                }
+            });
+        </script>
 
-@endsection
+    @endsection

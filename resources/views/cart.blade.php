@@ -35,7 +35,7 @@
         {{-- ===================== --}}
         {{-- CHECKOUT FORM (ONLY) --}}
         {{-- ===================== --}}
-        <form id="checkout-form" action="{{ route('checkout.index') }}" method="POST">
+        <form id="checkout-form" action="{{ route('checkout.prepare') }}" method="POST">
             @csrf
         </form>
 

@@ -13,91 +13,84 @@
 <div class="w-full bg-[#FFF8F6] min-h-screen">
     <div class="container mx-auto py-12 px-6">
 
-        <form action="{{ route('checkout.store') }}" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <form action="{{ route('checkout.confirm') }}" method="POST"
+            class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             @csrf
+
+            {{-- kirim cart_ids --}}
+            @foreach ($items as $item)
+                <input type="hidden" name="cart_ids[]" value="{{ $item->id }}">
+            @endforeach
 
             {{-- LEFT --}}
             <div class="lg:col-span-2 space-y-8">
 
-                {{-- 1. ALAMAT PENGIRIMAN --}}
+                {{-- ALAMAT PENGIRIMAN --}}
                 <div class="bg-white rounded-2xl shadow-md p-6">
-                    <h2 class="text-xl font-bold text-[#5F1D2A] mb-4">Alamat Pengiriman</h2>
+                    <h2 class="text-xl font-bold mb-4 text-[#5F1D2A]">Alamat Pengiriman</h2>
 
                     <div class="space-y-4">
-                        <input type="text" name="receiver_name" placeholder="Nama Penerima"
+                        <input name="receiver_name" placeholder="Nama Penerima"
                             class="w-full border rounded-xl px-4 py-3">
 
-                        <input type="text" name="phone" placeholder="Nomor HP"
+                        <input name="phone" placeholder="Nomor HP"
                             class="w-full border rounded-xl px-4 py-3">
 
-                        <textarea name="address" rows="3" placeholder="Alamat lengkap"
+                        <textarea name="address" rows="3"
+                            placeholder="Alamat lengkap"
                             class="w-full border rounded-xl px-4 py-3"></textarea>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <input name="subdistrict" placeholder="Kelurahan"
+                                class="border rounded-xl px-4 py-3">
+
+                            <input name="district" placeholder="Kecamatan"
+                                class="border rounded-xl px-4 py-3">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <input name="city" placeholder="Kota"
+                                class="border rounded-xl px-4 py-3">
+
+                            <input name="zip_code" placeholder="Kode Pos"
+                                class="border rounded-xl px-4 py-3">
+                        </div>
                     </div>
                 </div>
 
-                {{-- 2. TUJUAN & ONGKIR --}}
+                {{-- PENGIRIMAN --}}
                 <div class="bg-white rounded-2xl shadow-md p-6">
-                    <h2 class="text-xl font-bold text-[#5F1D2A] mb-4">Pengiriman</h2>
+                    <h2 class="text-xl font-bold mb-4 text-[#5F1D2A]">Pengiriman</h2>
 
-                    {{-- Origin --}}
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold mb-1">Kota Asal</label>
-                        <input type="text" value="Purwokerto (Default)"
-                            class="w-full border rounded-xl px-4 py-3 bg-gray-100" disabled>
-                    </div>
-
-                    {{-- Destination --}}
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold mb-1">Kota Tujuan</label>
-                        <select name="destination"
-                            class="w-full border rounded-xl px-4 py-3">
-                            <option value="">-- Pilih Kota Tujuan --</option>
-                            {{-- DATA DARI API RAJAONGKIR --}}
-                        </select>
-                    </div>
-
-                    {{-- Courier --}}
-                    <div>
-                        <label class="block text-sm font-semibold mb-1">Kurir</label>
-                        <select name="courier"
-                            class="w-full border rounded-xl px-4 py-3">
-                            <option value="">-- Pilih Kurir --</option>
-                            <option value="jne">JNE</option>
-                            <option value="pos">POS Indonesia</option>
-                            <option value="tiki">TIKI</option>
-                        </select>
-                    </div>
-
-                    {{-- Ongkir Result --}}
-                    <div class="mt-4 p-4 bg-[#F8D9DF] rounded-xl text-[#5F1D2A]">
-                        Ongkir akan dihitung otomatis
-                    </div>
+                    <select name="courier"
+                        class="w-full border rounded-xl px-4 py-3">
+                        <option value="">-- Pilih Kurir --</option>
+                        <option value="jne">JNE</option>
+                        <option value="pos">POS Indonesia</option>
+                        <option value="tiki">TIKI</option>
+                    </select>
                 </div>
 
-                {{-- 3. METODE PEMBAYARAN --}}
+                {{-- PEMBAYARAN --}}
                 <div class="bg-white rounded-2xl shadow-md p-6">
-                    <h2 class="text-xl font-bold text-[#5F1D2A] mb-4">Metode Pembayaran</h2>
+                    <h2 class="text-xl font-bold mb-4 text-[#5F1D2A]">Metode Pembayaran</h2>
 
-                    <div class="space-y-3">
-                        <label class="flex items-center gap-3">
-                            <input type="radio" name="payment_method" value="transfer" checked>
-                            <span>Transfer Bank (sementara)</span>
-                        </label>
-
-                        <label class="flex items-center gap-3 opacity-60">
-                            <input type="radio" disabled>
-                            <span>Payment Gateway (Coming Soon)</span>
-                        </label>
-                    </div>
+                    <label class="flex gap-3">
+                        <input type="radio" name="payment_method"
+                            value="transfer" checked>
+                        Transfer Bank (sementara)
+                    </label>
                 </div>
             </div>
 
             {{-- RIGHT --}}
             <div class="bg-white rounded-2xl shadow-md p-6 h-fit">
-                <h2 class="text-xl font-bold text-[#5F1D2A] mb-4">Ringkasan Pesanan</h2>
+                <h2 class="text-xl font-bold mb-4 text-[#5F1D2A]">
+                    Ringkasan Pesanan
+                </h2>
 
                 @foreach ($items as $item)
-                    <div class="flex justify-between mb-2 text-sm">
+                    <div class="flex justify-between text-sm mb-2">
                         <span>{{ $item->product->name }} × {{ $item->quantity }}</span>
                         <span>
                             Rp {{ number_format($item->product->price * $item->quantity, 0, ',', '.') }}
@@ -107,23 +100,12 @@
 
                 <hr class="my-4">
 
-                <div class="flex justify-between text-sm">
-                    <span>Subtotal</span>
+                <div class="flex justify-between font-bold">
+                    <span>Total</span>
                     <span>Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
                 </div>
 
-                <div class="flex justify-between text-sm">
-                    <span>Ongkir</span>
-                    <span id="shipping-cost">Rp 0</span>
-                </div>
-
-                <div class="flex justify-between font-bold text-lg mt-4">
-                    <span>Total</span>
-                    <span id="total-price">Rp {{ number_format($subtotal, 0, ',', '.') }}</span>
-                </div>
-
-                <button
-                    class="w-full mt-6 bg-[#5F1D2A] text-white py-3 rounded-xl hover:bg-[#4a1620] transition font-semibold">
+                <button class="w-full mt-6 bg-[#5F1D2A] text-white py-3 rounded-xl">
                     Konfirmasi Pesanan
                 </button>
             </div>
