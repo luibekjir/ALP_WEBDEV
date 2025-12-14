@@ -7,30 +7,19 @@ use Illuminate\Support\Facades\Schema;
 return new class extends Migration {
     public function up(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-    $table->string('receiver_name')->nullable();
-    $table->string('phone')->nullable();
-    $table->text('address')->nullable();
-    $table->string('destination')->nullable();
-    $table->string('courier')->nullable();
-    $table->integer('shipping_cost')->default(0);
-    $table->string('payment_method')->nullable();
-});
-
+        Schema::create('orders', function (Blueprint $table) {
+            $table->string('receiver_name')->nullable();
+            $table->string('phone')->nullable();
+            $table->text('address')->nullable();
+            $table->string('destination')->nullable();
+            $table->string('courier')->nullable();
+            $table->integer('shipping_cost')->default(0);
+            $table->string('payment_method')->nullable();
+        });
     }
 
     public function down(): void
     {
-        Schema::table('orders', function (Blueprint $table) {
-        $table->dropColumn([
-            'receiver_name',
-            'phone',
-            'address',
-            'destination',
-            'courier',
-            'shipping_cost',
-            'payment_method',
-        ]);
-    });
+        Schema::dropIfExists('carts');
     }
 };
