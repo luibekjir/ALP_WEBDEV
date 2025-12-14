@@ -97,7 +97,14 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'detail'])
         ->name('orders.detail');
+
 });
+
+Route::middleware('auth')->group(function () {
+Route::post('/event/{event}/register', [EventController::class, 'register'])
+    ->name('event.register');
+});
+
 
 
 

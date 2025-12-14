@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Event;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -70,4 +71,11 @@ class EventController extends Controller
 
         return redirect()->route('events.index')->with('success', 'Event deleted successfully.');
     }
+
+    public function register(Event $event)
+{
+    Auth::user()->events()->syncWithoutDetaching($event->id);
+
+    return back()->with('success', 'Berhasil mendaftar acara');
+}
 }
