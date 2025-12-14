@@ -6,6 +6,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -54,6 +56,35 @@ Route::middleware('auth')->group(function () {
     // Route::post('/orders/{product}', [OrderController::class, 'store'])->name('orders.store');
 });
 
+Route::middleware('auth')->group(function () {
 
+    // Tambah produk ke cart (Beli / tombol +)
+    Route::post('/cart/add/{product}', [CartController::class, 'add'])
+        ->name('cart.add');
 
+    // Lihat cart
+    Route::get('/cart', [CartController::class, 'index'])
+        ->name('cart.index');
+
+    // Kurangi quantity (tombol −)
+    Route::patch('/cart/{cart}', [CartController::class, 'update'])
+        ->name('cart.update');
+
+    // Hapus item dari cart
+    Route::delete('/cart/{cart}', [CartController::class, 'destroy'])
+        ->name('cart.destroy');
+
+    // Checkout (hanya cart yang dicentang)
+    Route::post('/checkout', [CheckoutController::class, 'store'])
+        ->name('checkout');
+});
+
+Route::middleware('auth')->group(function () {
+
+    Route::post('/checkout', [CheckoutController::class, 'index'])
+        ->name('checkout.index');
+
+    Route::post('/checkout/process', [CheckoutController::class, 'store'])
+        ->name('checkout.store');
+});
 
