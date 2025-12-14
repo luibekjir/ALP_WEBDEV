@@ -3,53 +3,81 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
+use App\Models\Product;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CartController extends Controller
 {
-    /** Display a listing of the resource. */
+    /**
+     * Tambah produk ke cart (tombol + / beli)
+     */
+    public function add(Product $product)
+    {
+        $userId = Auth::id();
+
+        $cart = Cart::where('user_id', $userId)
+            ->where('product_id', $product->id)
+            ->first();
+
+        if ($cart) {
+            $cart->increment('quantity');
+        } else {
+            Cart::create([
+                'user_id'    => $userId,
+                'product_id' => $product->id,
+                'quantity'   => 1,
+            ]);
+        }
+
+        return back()->with('success', 'Produk berhasil ditambahkan ke keranjang');
+    }
+
+    /**
+     * Tampilkan halaman cart
+     */
     public function index()
     {
-        $carts = Cart::all();
-        return view('carts.index', compact('carts'));
+        $carts = Cart::with('product')
+            ->where('user_id', Auth::id())
+            ->get();
+
+        return view('cart', compact('carts'));
     }
 
-    /** Show the form for creating a new resource. */
-    public function create()
+    /**
+     * Kurangi quantity (tombol −)
+     */
+    public function update(Cart $cart)
     {
-        return view('carts.create');
+        $this->authorizeCart($cart);
+
+        if ($cart->quantity > 1) {
+            $cart->decrement('quantity');
+        }
+
+        return back();
     }
 
-    /** Store a newly created resource in storage. */
-    public function store(Request $request)
-    {
-        // TODO: validate and persist
-        return redirect()->route('carts.index')->with('success', 'Cart created (placeholder)');
-    }
-
-    /** Display the specified resource. */
-    public function show(Cart $cart)
-    {
-        return view('carts.show', compact('cart'));
-    }
-
-    /** Show the form for editing the specified resource. */
-    public function edit(Cart $cart)
-    {
-        return view('carts.edit', compact('cart'));
-    }
-
-    /** Update the specified resource in storage. */
-    public function update(Request $request, Cart $cart)
-    {
-        // TODO: validate and update
-        return redirect()->route('carts.index')->with('success', 'Cart updated (placeholder)');
-    }
-
-    /** Remove the specified resource from storage. */
+    /**
+     * Hapus item cart
+     */
     public function destroy(Cart $cart)
     {
+        $this->authorizeCart($cart);
+
         $cart->delete();
-        return redirect()->route('carts.index')->with('success', 'Cart deleted');
+
+        return back()->with('success', 'Produk dihapus dari keranjang');
+    }
+
+    /**
+     * Helper: pastikan cart milik user login
+     */
+    private function authorizeCart(Cart $cart)
+    {
+        if ($cart->user_id !== Auth::id()) {
+            abort(403, 'Akses tidak diizinkan');
+        }
     }
 }

@@ -1,7 +1,9 @@
 @extends('section.layout')
 
 @section('content')
-
+    <div>
+        <livewire:pricing-check />
+    </div>
     <!-- Header -->
     <div class="w-full bg-gradient-to-b from-[#F8D9DF] to-[#FFD6E0] py-14 text-center">
         <h1 class="text-4xl font-bold text-[#5F1D2A]">Profil Saya</h1>
@@ -30,16 +32,7 @@
                         <h2 class="text-2xl font-bold text-[#5F1D2A]">{{ $user->name }}</h2>
                         <p class="text-[#5F1D2A]/70 mt-1">{{ ucfirst($user->role) }}</p>
                     </div>
-                    @if (session('success'))
-                        <div class="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    @if (session('error'))
-                        <div class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+
                     <!-- Information Grid -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
 

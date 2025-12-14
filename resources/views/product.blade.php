@@ -15,12 +15,12 @@
 
                 {{-- Button untuk membuka modal --}}
                 @if (Auth::check() && Auth::user()->role === 'admin')
-                <div class="fixed bottom-8 right-8">
-                    <button id="openProductModal"
-                        class="bg-[#5F1D2A] text-white px-5 py-3 rounded-full shadow-lg hover:bg-[#4a1620] transition">
-                        + Tambah Produk
-                    </button>
-                </div>
+                    <div class="fixed bottom-8 right-8">
+                        <button id="openProductModal"
+                            class="bg-[#5F1D2A] text-white px-5 py-3 rounded-full shadow-lg hover:bg-[#4a1620] transition">
+                            + Tambah Produk
+                        </button>
+                    </div>
                 @endif
 
                 {{-- Sidebar Kategori --}}
@@ -117,11 +117,23 @@
                                             <span class="text-[#5F1D2A] font-bold text-base">
                                                 Rp {{ number_format($product->price, 0, ',', '.') }}
                                             </span>
-                                            <button
-                                                class="bg-[#5F1D2A] text-white px-4 py-2 rounded-lg hover:bg-[#4a1620] transition font-semibold">
-                                                Beli
-                                            </button>
+
+                                            @auth
+                                                <form action="{{ route('cart.add', $product->id) }}" method="POST">
+                                                    @csrf
+                                                    <button type="submit"
+                                                        class="bg-[#5F1D2A] text-white px-4 py-2 rounded-lg hover:bg-[#4a1620] transition font-semibold">
+                                                        Beli
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <a href="{{ url('/login') }}"
+                                                    class="bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold">
+                                                    Login
+                                                </a>
+                                            @endauth
                                         </div>
+
                                     </div>
                                 </div>
                             @endforeach
