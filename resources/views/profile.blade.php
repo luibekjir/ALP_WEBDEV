@@ -2,6 +2,8 @@
 
 @section('content')
 
+<livewire:pricing-check />
+
 <!-- Header -->
 <div class="w-full bg-gradient-to-b from-[#F8D9DF] to-[#FFD6E0] py-14 text-center">
     <h1 class="text-4xl font-bold text-[#5F1D2A]">Profil Saya</h1>

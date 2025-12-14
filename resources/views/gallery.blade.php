@@ -12,6 +12,8 @@
     <div class="w-full bg-[#FFF8F6] min-h-screen">
         <div class="container mx-auto py-16 px-6">
 
+
+            
             {{-- Sorting & Count --}}
             <div class="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
                 <p class="text-[#5F1D2A]/70 text-sm sm:text-base">

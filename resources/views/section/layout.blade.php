@@ -41,7 +41,7 @@
             
             <!-- Dropdown Item -->
             <li class="relative group">
-                <a href="/" class="relative nav-hover pb-1 text-black">About Us</a>
+                <a href="/aboutus" class="relative nav-hover pb-1 text-black">About Us</a>
             </li>
 
             <li class="relative group">
