@@ -6,6 +6,7 @@
     <title>@yield('title', 'Batik Bulau Sayang')</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
+    @livewireStyles
 
     <style>
         /* Hover underline animation */
@@ -38,6 +39,16 @@
 
         <!-- MAIN MENU -->
         <ul id="menuList" class="hidden lg:flex gap-10 text-lg font-semibold items-center">
+            
+            <!-- Cart Item -->
+            <li class="relative group">
+                <a href="/cart" class="flex items-center gap-2 relative nav-hover pb-1 text-black">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293a1 1 0 00.117 1.497A6 6 0 0012 21c1.657 0 3.22-.663 4.33-1.97M17 13l2.707-2.707a1 1 0 00-.117-1.497A6 6 0 0012 3c-1.657 0-3.22.663-4.33 1.97M9 6h0M15 6h0" />
+                    </svg>
+                    Cart
+                </a>
+            </li>
             
             <!-- Dropdown Item -->
             <li class="relative group">
@@ -100,6 +111,8 @@
     <p class="font-bold text-xl">MENU</p>
     <hr class="border-gray-300">
 
+    <a href="/cart" class="block py-2 text-lg font-semibold hover:text-[#8E4954]">🛒 Cart</a>
+
     <details class="group">
         <summary class="cursor-pointer text-lg py-2">About Us</summary>
     </details>
@@ -133,6 +146,6 @@
     <h1>@yield('pagetitle')</h1>
     @yield('content')
 </div>
-
+@livewireScripts
 </body>
 </html>

@@ -24,4 +24,13 @@ class Gallery extends Model
         'created_at',
         'updated_at'
     ];
+
+    public function likedByUsers(){
+        return $this->belongsToMany(User::class, 'likes');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(GalleryComment::class);
+    }
 }

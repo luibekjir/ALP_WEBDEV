@@ -7,24 +7,25 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
 
-Route::get('/', [HomeController::class, 'index']);
+Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
 
 Route::get('/gallery', [GalleryController::class, 'index']);
-Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store');
+Route::get('/gallery/{gallery}', [GalleryController::class, 'show'])->name('gallery.show');
+Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store')->middleware('admin');
 
 Route::get('/product', [ProductController::class, 'index']);
-Route::post('/product', [ProductController::class, 'store'])->name('product.store');
+Route::post('/product', [ProductController::class, 'store'])->name('product.store')->middleware('admin');
 
 
 Route::get('/event', [EventController::class, 'index']);
-Route::post('/event', [EventController::class, 'store'])->name('event.store');
+Route::post('/event', [EventController::class, 'store'])->name('event.store')->middleware('admin');
 
 // Route::get('/', [HomeController::class, 'index'])->middleware('admin');
 
 Route::get('/login', [UserController::class, 'login']);
 
-Route::post('/login', [UserController::class, 'authLogin'])->name('login');
+Route::post('/post-login', [UserController::class, 'authLogin'])->name('login');
 
 Route::get('/register', [UserController::class, 'register']);
 
@@ -45,6 +46,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/{user}/change-password', [UserController::class, 'changePasswordForm'])->name('profile.change-password');
     Route::post('/profile/{user}/change-password', [UserController::class, 'updatePassword'])->name('profile.update-password');
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
+
+    // Gallery comments
+    Route::post('/gallery/{gallery}/comment', [GalleryController::class, 'storeComment'])->name('gallery.comment');
+
+    // Route::get('/orders/create/{product}', [OrderController::class, 'create'])->name('orders.create');
+    // Route::post('/orders/{product}', [OrderController::class, 'store'])->name('orders.store');
 });
 
 

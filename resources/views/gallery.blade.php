@@ -52,7 +52,8 @@
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                     @foreach ($gallery as $item)
                         <div
-                            class="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden flex flex-col h-full group">
+                            class="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden flex flex-col h-full group cursor-pointer"
+                            onclick="window.location.href='{{ route('gallery.show', $item->id) }}'">
 
                             {{-- Image --}}
                             <div class="h-64 relative overflow-hidden rounded-t-2xl">
@@ -82,15 +83,7 @@
 
                                 {{-- Like & Comment Buttons --}}
                                 <div class="mt-auto flex items-center justify-between pt-3 border-t border-[#B8A5A8]/20">
-                                    <button
-                                        class="flex items-center gap-1 text-[#5F1D2A]/80 hover:text-[#5F1D2A] transition">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                                            viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M14 9l3 3m0 0l-3 3m3-3H7m6 0l-3-3m0 0l3-3" />
-                                        </svg>
-                                        Like ({{ $item->like_id ?? 0 }})
-                                    </button>
+                                    <livewire:like-button :gallery="$item" :key="$item->id" />
 
                                     <button
                                         class="flex items-center gap-1 text-[#5F1D2A]/80 hover:text-[#5F1D2A] transition">

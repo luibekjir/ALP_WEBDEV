@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Gallery;
+use Illuminate\Support\Facades\Auth;
 
 class GalleryController extends Controller
 {
@@ -21,28 +22,29 @@ class GalleryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-        'name' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'image' => 'nullable|image|max:2048',
-    ]);
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'image' => 'nullable|image|max:2048',
+        ]);
 
-    $gallery = new Gallery();
-    $gallery->title = $request->name;
-    $gallery->description = $request->description;
-    
-    if ($request->hasFile('image')) {
-        $path = $request->file('image')->store('gallery', 'public');
-        $gallery->image_url = $path;
-    }
+        $gallery = new Gallery();
+        $gallery->title = $request->name;
+        $gallery->description = $request->description;
 
-    $gallery->save();
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('gallery', 'public');
+            $gallery->image_url = $path;
+        }
 
-    return redirect()->back()->with('success', 'Koleksi berhasil ditambahkan!');
+        $gallery->save();
+
+        return redirect()->back()->with('success', 'Koleksi berhasil ditambahkan!');
     }
 
     public function show(Gallery $gallery)
     {
-        return view('gallery.show', compact('gallery'));
+        $gallery->load(['comments.user', 'likedByUsers']);
+        return view('gallery-detail', compact('gallery'));
     }
 
     public function edit(Gallery $gallery)
@@ -72,5 +74,19 @@ class GalleryController extends Controller
         $gallery->delete();
 
         return redirect()->route('gallery.index')->with('success', 'Gallery deleted successfully.');
+    }
+
+    public function storeComment(Request $request, Gallery $gallery)
+    {
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+        ]);
+
+        $gallery->comments()->create([
+            'user_id' => Auth::user()->id,
+            'comment' => $request->comment,
+        ]);
+
+        return redirect()->back()->with('success', 'Komentar berhasil ditambahkan!');
     }
 }
