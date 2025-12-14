@@ -26,7 +26,8 @@ class UserController extends Controller
     {
         return view('forgot-password');
     }
-    public function profile(){
+    public function profile()
+    {
         $user = Auth::user();
         $orders = $user->orders()
         ->with(['items.product'])
@@ -154,21 +155,19 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('profile.show', $user)->with('success', 'Profil berhasil diperbarui');
+        return redirect('/profile')->with('success', 'Profil berhasil diperbarui!');
     }
 
-    public function changePasswordForm(User $user)
+    public function changePasswordForm()
     {
-        if (Auth::id() !== $user->id) {
-            return redirect('/')->with('error', 'Unauthorized');
-        }
+        $user = Auth::user();
         return view('change-password', compact('user'));
     }
 
     public function updatePassword(Request $request, User $user)
     {
         if (Auth::id() !== $user->id) {
-            return redirect('/')->with('error', 'Unauthorized');
+            return redirect('/')->with('message', 'Unauthorized');
         }
 
         $request->validate([
@@ -177,60 +176,34 @@ class UserController extends Controller
         ]);
 
         if (!Hash::check($request->current_password, $user->password)) {
-            return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai']);
+            return redirect()->back()->with(['message' => 'Password saat ini tidak sesuai!']);
+        }
+
+        if ($request->password_confirmation != $request->password) {
+            return redirect()->back()->with('message', 'Password Baru dan Konfirmasi Password tidak sama!');
         }
 
         $user->update(['password' => bcrypt($request->password)]);
 
-        return redirect()->route('profile.show', $user)->with('success', 'Password berhasil diubah');
+        return redirect('/profile')->with('success', 'Password berhasil diubah');
     }
 
-    public function logout(Request $request){
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect('');
-
     }
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function destroy()
     {
-        //
-    }
+        $user = Auth::user();
 
+        Auth::logout();
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(User $user)
-    {
-        //
-    }
+        $user->delete();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(User $user)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, User $user)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(User $user)
-    {
-        //
+        return redirect('/');
     }
 }

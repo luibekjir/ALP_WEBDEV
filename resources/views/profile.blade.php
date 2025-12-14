@@ -78,7 +78,6 @@
                     </div> --}}
                     </div>
 
-
                     <!-- Action Buttons -->
                     <div class="flex flex-col sm:flex-row gap-4">
                         <button onclick="openEditModal()"
@@ -94,6 +93,16 @@
                             <button type="submit"
                                 class="w-full border-2 border-red-500 text-red-500 px-6 py-3 rounded-lg hover:bg-red-50 transition font-semibold">
                                 Logout
+                            </button>
+                        </form>
+                        <form action="{{ route('profile.destroy') }}" method="POST" class="flex-1"
+                            onsubmit="return confirmDeleteAccount()">
+                            @csrf
+                            @method('DELETE')
+
+                            <button type="submit"
+                                class="w-full border-2 border-red-700 text-red-700 px-6 py-3 rounded-lg hover:bg-red-100 transition font-semibold">
+                                Hapus Akun
                             </button>
                         </form>
                     </div>
@@ -197,12 +206,7 @@
                                 <p class="font-semibold text-[#5F1D2A]">Password</p>
                                 <p class="text-sm text-[#5F1D2A]/70">Ubah password akun Anda</p>
                             </div>
-                            <a href="{{ route('profile.change-password', $user->id) }}"
-                                class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">
-                                Ubah
-                            </a>
-                        </div>
-                        {{-- <a href="{{ route('profile.change-password', $user) }}" 
+                            {{-- <a href="{{ route('profile.change-password', $user) }}" 
                            class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">
                             Ubah
                         </a> --}}
@@ -214,18 +218,18 @@
                         </form>
                     </div>
 
-                    {{-- <div class="flex items-center justify-between p-4 bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg">
+                        {{-- <div class="flex items-center justify-between p-4 bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg">
                         <div>
                             <p class="font-semibold text-[#5F1D2A]">Email</p>
                             <p class="text-sm text-[#5F1D2A]/70">{{ $user->email }}</p>
                         </div>
-                        <span class="text-green-600 font-semibold">✓ Terverifikasi</span>
-                    </div> --}}
+                        {{-- <span class="text-green-600 font-semibold">✓ Terverifikasi</span> --}}
+                        {{-- </div> --}}
+                    </div>
                 </div>
-            </div>
 
+            </div>
         </div>
-    </div>
     </div>
 
     <!-- Edit Profile Modal -->
@@ -239,115 +243,121 @@
                         <button onclick="closeEditModal()"
                             class="text-[#5F1D2A] hover:text-[#4a1620] text-2xl">&times;</button>
                     </div>
+                </div>
 
-                    <!-- Modal Body -->
-                    <div class="p-6">
+                <!-- Modal Body -->
+                <div class="p-6">
 
-                        @if ($errors->any())
-                            <div class="mb-4 p-3 bg-red-100 text-red-800 rounded-lg">
-                                <ul class="list-disc list-inside">
-                                    @foreach ($errors->all() as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
+                    @if ($errors->any())
+                        <div class="mb-4 p-3 bg-red-100 text-red-800 rounded-lg">
+                            <ul class="list-disc list-inside">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
 
-                        <form action="{{ route('profile.update', $user) }}" method="POST" class="space-y-4">
-                            @csrf
-                            @method('PUT')
+                    <form action="{{ route('profile.update', $user) }}" method="POST" class="space-y-4">
+                        @csrf
+                        @method('PUT')
 
-                            <!-- Name -->
-                            <div>
-                                <label for="name" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nama
-                                    Lengkap</label>
-                                <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
-                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
-                                    required>
-                                @error('name')
-                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <!-- Name -->
+                        <div>
+                            <label for="name" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nama
+                                Lengkap</label>
+                            <input type="text" id="name" name="name" value="{{ old('name', $user->name) }}"
+                                class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
+                                required>
+                            @error('name')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            <!-- Email -->
-                            <div>
-                                <label for="email" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Email</label>
-                                <input type="email" id="email" name="email"
-                                    value="{{ old('email', $user->email) }}"
-                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
-                                    required>
-                                @error('email')
-                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <!-- Email -->
+                        <div>
+                            <label for="email" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Email</label>
+                            <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
+                                class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
+                                required>
+                            @error('email')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            <!-- Phone -->
-                            <div>
-                                <label for="phone" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nomor
-                                    Telepon</label>
-                                <input type="tel" id="phone" name="phone"
-                                    value="{{ old('phone', $user->phone) }}"
-                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
-                                    placeholder="Contoh: 081234567890">
-                                @error('phone')
-                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <!-- Phone -->
+                        <div>
+                            <label for="phone" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nomor
+                                Telepon</label>
+                            <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
+                                class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
+                                placeholder="Contoh: 081234567890">
+                            @error('phone')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            <!-- Address -->
-                            <div>
-                                <label for="address" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat
-                                    Lengkap</label>
-                                <textarea id="address" name="address" rows="4"
-                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent resize-none"
-                                    placeholder="Masukkan alamat lengkap Anda">{{ old('address', $user->address) }}</textarea>
-                                @error('address')
-                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                        <!-- Address -->
+                        <div>
+                            <label for="address" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat
+                                Lengkap</label>
+                            <textarea id="address" name="address" rows="4"
+                                class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent resize-none"
+                                placeholder="Masukkan alamat lengkap Anda">{{ old('address', $user->address) }}</textarea>
+                            @error('address')
+                                <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
+                            @enderror
+                        </div>
 
-                            <!-- Modal Footer -->
-                            <div class="flex gap-3 pt-4 border-t border-[#B8A5A8]/20">
-                                <button type="button" onclick="closeEditModal()"
-                                    class="flex-1 border-2 border-[#B8A5A8] text-[#5F1D2A] px-6 py-3 rounded-lg hover:bg-[#F8D9DF] transition font-semibold">
-                                    Batal
-                                </button>
-                                <button type="submit"
-                                    class="flex-1 bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold">
-                                    Simpan Perubahan
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                        <!-- Modal Footer -->
+                        <div class="flex gap-3 pt-4 border-t border-[#B8A5A8]/20">
+                            <button type="button" onclick="closeEditModal()"
+                                class="flex-1 border-2 border-[#B8A5A8] text-[#5F1D2A] px-6 py-3 rounded-lg hover:bg-[#F8D9DF] transition font-semibold">
+                                Batal
+                            </button>
+                            <button type="submit"
+                                class="flex-1 bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold">
+                                Simpan Perubahan
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            // Modal functions
-            function openEditModal() {
-                document.getElementById('editModal').classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+    <script>
+        // Modal functions
+        function openEditModal() {
+            document.getElementById('editModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
             }
+        });
 
-            function closeEditModal() {
-                document.getElementById('editModal').classList.add('hidden');
-                document.body.style.overflow = 'auto';
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && !document.getElementById('editModal').classList.contains('hidden')) {
+                closeEditModal();
             }
+        });
 
-            // Close modal when clicking outside
-            document.getElementById('editModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeEditModal();
-                }
-            });
+        function confirmDeleteAccount() {
+        return confirm(
+            '⚠️ Apakah Anda yakin ingin menghapus akun ini?\n\nTindakan ini TIDAK dapat dibatalkan.'
+        );
+    }
 
-            // Close modal with Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && !document.getElementById('editModal').classList.contains('hidden')) {
-                    closeEditModal();
-                }
-            });
-        </script>
+    </script>
 
-    @endsection
+@endsection

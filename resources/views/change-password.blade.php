@@ -1,182 +1,153 @@
 @extends('section.layout')
 
 @section('content')
-    <!doctype html>
-    <html lang="en">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            background: #fff;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+        }
 
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Login</title>
-        <style>
-            /* Page background */
-            html,
-            body {
-                height: 100%;
-                margin: 0;
-                background: #ffffff;
-                font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-                -webkit-font-smoothing: antialiased;
-                -moz-osx-font-smoothing: grayscale;
-                color: #111827;
-            }
+        .login-card {
+            background: #FFD9DC;
+            border-radius: 14px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 12px 40px rgba(16, 24, 40, 0.12);
+            padding: 32px;
+        }
 
-            /* Centering wrapper */
-            .login-wrapper {
-                min-height: 100%;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                padding: 32px;
-            }
+        .login-card h1 {
+            font-size: 1.6rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #111827;
+        }
 
-            /* Pink container */
-            .login-card {
-                background: #FFD9DC;
-                border-radius: 12px;
-                max-width: 420px;
-                width: 100%;
-                box-shadow: 0 8px 30px rgba(16, 24, 40, 0.08);
-                padding: 28px;
-            }
+        .login-card p {
+            font-size: 0.9rem;
+            color: #374151;
+            margin-bottom: 22px;
+        }
 
-            .login-card h1 {
-                margin: 0 0 12px 0;
-                font-size: 1.5rem;
-                font-weight: 600;
-                color: #111827;
-            }
+        .form-group {
+            margin-bottom: 16px;
+        }
 
-            .login-card p.lead {
-                margin: 0 0 18px 0;
-                color: #374151;
-                font-size: 0.95rem;
-            }
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(17, 24, 39, 0.15);
+            font-size: 0.95rem;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
 
-            label {
-                display: block;
-                font-size: 0.85rem;
-                margin-bottom: 6px;
-                color: #111827;
-            }
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #111827;
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
+        }
 
-            input[type="email"],
-            input[type="password"] {
-                width: 100%;
-                padding: 10px 12px;
-                border-radius: 8px;
-                border: 1px solid rgba(17, 24, 39, 0.12);
-                background: #fff;
-                box-sizing: border-box;
-                margin-bottom: 14px;
-                font-size: 0.95rem;
-            }
+        .error-text {
+            font-size: 0.8rem;
+            color: #b91c1c;
+            margin-top: 4px;
+        }
 
-            .btn-primary {
-                display: inline-block;
-                width: 100%;
-                padding: 10px 14px;
-                border-radius: 8px;
-                background: #111827;
-                color: #fff;
-                text-align: center;
-                text-decoration: none;
-                font-weight: 600;
-                border: none;
-                cursor: pointer;
-                font-size: 0.95rem;
-            }
+        .btn-primary {
+            width: 100%;
+            padding: 12px;
+            border-radius: 10px;
+            background: #111827;
+            color: #fff;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
+        }
 
-            .helper-links {
-                margin-top: 20px;
-                font-size: 0.9rem;
-                color: #374151;
-            }
+        .btn-primary:hover {
+            background: #1f2937;
+        }
 
-            .helper-links-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 12px;
-            }
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
 
-            .helper-links-row:last-child {
-                margin-bottom: 0;
-                text-align: center;
-                justify-content: center;
-            }
+        .alert-success {
+            background: #dcfce7;
+            color: #166534;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+        }
 
-            .helper-links a {
-                color: #111827;
-                text-decoration: underline;
-                transition: color 0.2s ease;
-            }
+        .helper-links {
+            margin-top: 18px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
 
-            .helper-links a:hover {
-                color: #374151;
-            }
+        .helper-links a {
+            color: #111827;
+            font-weight: 500;
+            text-decoration: underline;
+        }
+    </style>
 
-            .remember-me {
-                display: inline-flex;
-                align-items: center;
-                font-weight: 400;
-            }
+    <div class="login-wrapper">
+        <main class="login-card">
+            <h1>Ubah Password</h1>
+            <p>Pastikan password baru berbeda dan mudah diingat.</p>
 
-            .remember-me input {
-                margin-right: 6px;
-                cursor: pointer;
-            }
+            @if (session('success'))
+                <div class="alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('message'))
+                <div class="text-red-500">
+                    {{ session('message') }}
+                </div>
+            @endif
 
-            @media (max-width: 480px) {
-                .login-card {
-                    padding: 20px;
-                    border-radius: 10px;
-                }
+            <form method="POST" action="{{ route('profile.password-update', $user) }}">
+                @csrf
+                @method('PUT')
 
-                .helper-links-row {
-                    flex-direction: column;
-                    align-items: flex-start;
-                    gap: 8px;
-                }
-
-                .helper-links-row:last-child {
-                    align-items: center;
-                    margin-top: 12px;
-                }
-            }
-        </style>
-    </head>
-
-    <body>
-        <div class="login-wrapper">
-            <main class="login-card" role="main">
-                <h1>Masuk</h1>
-                <p class="lead">Silakan masuk menggunakan akun Anda.</p>
-                @error('email')
-                    <div class="text-red-500">
-                        {{ $message }}
-                    </div>
-                @enderror
-                @if (session('message'))
-                    <div class="text-red-500">
-                        {{ session('message') }}
-                    </div>
-                @endif
-                <form method="POST" action="{{ route('profile.password.update') }}">
-                    @csrf
-                    @method('PUT')
-
+                <div class="form-group">
                     <input type="password" name="current_password" placeholder="Password lama" required>
+                    @error('current_password')
+                        <div class="error-text">{{ $message }}</div>
+                    @enderror
+                </div>
 
+                <div class="form-group">
                     <input type="password" name="password" placeholder="Password baru" required>
+                    @error('password')
+                        <div class="error-text">{{ $message }}</div>
+                    @enderror
+                </div>
 
+                <div class="form-group">
                     <input type="password" name="password_confirmation" placeholder="Konfirmasi password baru" required>
+                </div>
 
-                    <button type="submit">Ubah Password</button>
-                </form>
-            </main>
-        </div>
-    </body>
+                <button type="submit" class="btn-primary">
+                    Simpan Perubahan
+                </button>
+            </form>
 
-    </html>
-    {{-- @endsection --}}
+            <div class="helper-links">
+                Kembali ke <a href="/profil">Profil</a> <br>
+                <a href="/forgot-password">Lupa password?</a>
+            </div>
+        </main>
+    </div>
+@endsection
