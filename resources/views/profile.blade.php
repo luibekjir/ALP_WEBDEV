@@ -108,6 +108,86 @@
                     </div>
                 </div>
 
+
+                {{-- ORDER HISTORY --}}
+                <div class="bg-white border border-[#B8A5A8] rounded-xl shadow-md p-8 mb-8">
+                    <h3 class="text-xl font-bold text-[#5F1D2A] mb-6">
+                        Riwayat Pesanan
+                    </h3>
+
+                    @if ($orders->isEmpty())
+                        <div class="text-center py-10 text-[#5F1D2A]/60">
+                            <p>Belum ada pesanan</p>
+                        </div>
+                    @else
+                        <div class="space-y-6">
+                            @foreach ($orders as $order)
+                                <div class="border border-[#B8A5A8]/30 rounded-xl p-6">
+
+                                    {{-- HEADER --}}
+                                    <div class="flex justify-between items-center mb-4">
+                                        <div>
+                                            <p class="font-semibold text-[#5F1D2A]">
+                                                Order #{{ $order->id }}
+                                            </p>
+                                            <p class="text-sm text-[#5F1D2A]/60">
+                                                {{ $order->created_at->format('d M Y, H:i') }}
+                                            </p>
+                                        </div>
+
+                                        {{-- STATUS --}}
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-semibold
+                            @if ($order->status === 'pending') bg-yellow-100 text-yellow-700
+                            @elseif($order->status === 'paid') bg-green-100 text-green-700
+                            @elseif($order->status === 'shipped') bg-blue-100 text-blue-700
+                            @else bg-gray-100 text-gray-700 @endif
+                        ">
+                                            {{ ucfirst($order->status) }}
+                                        </span>
+                                    </div>
+
+                                    {{-- ITEMS --}}
+                                    {{-- <div class="space-y-2 mb-4">
+                                        @foreach ($order->items as $item)
+                                            <div class="flex justify-between text-sm">
+                                                <span>
+                                                    {{ $item->product->name }} × {{ $item->quantity }}
+                                                </span>
+                                                <span>
+                                                    Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div> --}}
+
+                                    {{-- TOTAL --}}
+                                    <div class="flex justify-between items-center border-t pt-4">
+                                        <span class="font-semibold text-[#5F1D2A]">
+                                            Total
+                                        </span>
+                                        <span class="font-bold text-[#5F1D2A] text-lg">
+                                            Rp {{ number_format($order->total_price, 0, ',', '.') }}
+                                        </span>
+                                    </div>
+
+                                    {{-- ACTION --}}
+                                    {{-- NEXT STEP --}}
+                                    
+                    <div class="mt-4 text-right">
+                        <a href="{{ route('orders.detail', $order) }}"
+                           class="text-[#5F1D2A] hover:underline font-semibold">
+                            Lihat Detail
+                        </a>
+                    </div>
+                   
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+
                 <!-- Security Section -->
                 <div class="bg-white border border-[#B8A5A8] rounded-xl shadow-md p-8">
                     <h3 class="text-xl font-bold text-[#5F1D2A] mb-6 flex items-center gap-2">
@@ -130,9 +210,13 @@
                            class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">
                             Ubah
                         </a> --}}
-                            <a href="{{ route('profile.change-password') }}"
-                                class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">Ubah</a>
-                        </div>
+                        <form action="{{ route('profile.change-password', $user) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" id="change-password"
+                                class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">Ubah</button>
+                        </form>
+                    </div>
 
                         {{-- <div class="flex items-center justify-between p-4 bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg">
                         <div>
