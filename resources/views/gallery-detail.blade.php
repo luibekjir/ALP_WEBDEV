@@ -41,9 +41,9 @@
                             <textarea name="comment" rows="3" placeholder="Tulis komentar Anda..."
                                       class="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
                                       required></textarea>
-                            @error('comment')
+                            {{-- @error('comment')
                                 <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                            @enderror
+                            @enderror --}}
                         </div>
                         <div class="flex-shrink-0">
                             <button type="submit" class="bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold">
@@ -75,6 +75,13 @@
                                         <span class="text-sm text-gray-500">{{ $comment->created_at->diffForHumans() }}</span>
                                     </div>
                                     <p class="text-gray-700">{{ $comment->comment }}</p>
+                                    @if(auth()->check() && $comment->user_id == auth()->id())
+                                        <form action="{{ route('gallery.delete-comment', $comment) }}" method="POST" class="mt-2" style="display:inline;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm font-semibold" onclick="return confirm('Apakah Anda yakin ingin menghapus komentar ini?')">Hapus</button>
+                                        </form>
+                                    @endif
                                 </div>
                             </div>
                         </div>

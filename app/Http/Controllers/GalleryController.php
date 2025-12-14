@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Gallery;
+use App\Models\GalleryComment;
 use Illuminate\Support\Facades\Auth;
 
 class GalleryController extends Controller
@@ -88,5 +89,11 @@ class GalleryController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Komentar berhasil ditambahkan!');
+    }
+
+    public function deleteComment(GalleryComment $comment)
+    {
+        $comment->delete();
+        return redirect()->back()->with('success', 'Komentar berhasil dihapus');
     }
 }

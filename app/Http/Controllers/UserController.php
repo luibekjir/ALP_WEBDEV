@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 
@@ -115,6 +116,62 @@ class UserController extends Controller
         }
 
         return back()->withErrors(['email' => __($status)]);
+    }
+
+    public function showProfile(User $user)
+    {
+        // Check if user is authorized
+        if (Auth::id() !== $user->id && Auth::user()->role !== 'admin') {
+            return redirect('/')->with('error', 'Unauthorized');
+        }
+        return view('profile', compact('user'));
+    }
+
+
+    public function updateProfile(Request $request, User $user)
+    {
+        if (Auth::id() !== $user->id) {
+            return redirect('/')->with('error', 'Unauthorized');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string|max:1000',
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('profile.show', $user)->with('success', 'Profil berhasil diperbarui');
+    }
+
+    public function changePasswordForm(User $user)
+    {
+        if (Auth::id() !== $user->id) {
+            return redirect('/')->with('error', 'Unauthorized');
+        }
+        return view('change-password', compact('user'));
+    }
+
+    public function updatePassword(Request $request, User $user)
+    {
+        if (Auth::id() !== $user->id) {
+            return redirect('/')->with('error', 'Unauthorized');
+        }
+
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Password saat ini tidak sesuai']);
+        }
+
+        $user->update(['password' => bcrypt($request->password)]);
+
+        return redirect()->route('profile.show', $user)->with('success', 'Password berhasil diubah');
     }
 
     public function logout(Request $request){
