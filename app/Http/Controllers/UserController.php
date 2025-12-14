@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use App\Models\Order;
 
 class UserController extends Controller
 {
@@ -28,7 +29,12 @@ class UserController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        return view('profile', compact('user'));
+        $orders = $user->orders()
+        ->with(['items.product'])
+        ->latest()
+        ->get();
+
+    return view('profile', compact('user', 'orders'));
     }
     /**
      * Show the form for creating a new resource.
@@ -119,14 +125,19 @@ class UserController extends Controller
         return back()->withErrors(['email' => __($status)]);
     }
 
-    public function showProfile(User $user)
-    {
-        // Check if user is authorized
-        if (Auth::id() !== $user->id && Auth::user()->role !== 'admin') {
-            return redirect('/')->with('error', 'Unauthorized');
-        }
-        return view('profile', compact('user'));
-    }
+    // public function profile(User $user, Order $order)
+    // {
+    //     // Check if user is authorized
+    //     if (Auth::id() !== $user->id && Auth::user()->role !== 'admin') {
+    //         return redirect('/')->with('error', 'Unauthorized');
+    //     }
+    //     $orders = $user->orders()
+    //     ->with(['items.product'])
+    //     ->latest()
+    //     ->get();
+
+    // return view('profile', compact('user', 'orders'));
+    // }
 
 
     public function updateProfile(Request $request, User $user)

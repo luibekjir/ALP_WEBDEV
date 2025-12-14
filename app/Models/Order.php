@@ -9,18 +9,24 @@ class Order extends Model
 {
     use HasFactory;
 
+    
     protected $fillable = [
         'user_id',
         'receiver_name',
         'phone',
         'address',
-        'destination',
+        'subdistrict',
+        'district',
+        'city',
+        'zip_code',
         'courier',
-        'shipping_cost',
         'payment_method',
         'total_price',
         'status',
     ];
+
+
+
 
     /**
      * Order milik satu user
@@ -37,4 +43,5 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
 }

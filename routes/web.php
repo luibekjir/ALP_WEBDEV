@@ -8,6 +8,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -76,17 +77,27 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{cart}', [CartController::class, 'destroy'])
         ->name('cart.destroy');
 
-    // Checkout (hanya cart yang dicentang)
-    Route::post('/checkout', [CheckoutController::class, 'store'])
-        ->name('checkout');
 });
 
 Route::middleware('auth')->group(function () {
 
-    Route::post('/checkout', [CheckoutController::class, 'index'])
+    // 1️⃣ Terima cart_ids dari cart (POST)
+    Route::post('/checkout', [CheckoutController::class, 'prepare'])
+        ->name('checkout.prepare');
+
+    // 2️⃣ Tampilkan halaman checkout (GET)
+    Route::get('/checkout', [CheckoutController::class, 'index'])
         ->name('checkout.index');
 
-    Route::post('/checkout/process', [CheckoutController::class, 'store'])
-        ->name('checkout.store');
+    Route::post('/checkout/confirm', [CheckoutController::class, 'store'])
+        ->name('checkout.confirm');
 });
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/orders/{order}', [OrderController::class, 'detail'])
+        ->name('orders.detail');
+});
+
+
 
