@@ -8,6 +8,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -91,7 +92,7 @@ Route::middleware('auth')->group(function () {
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/orders/{order}', [OrderController::class, 'show'])
+    Route::get('/orders/{order}', [OrderController::class, 'detail'])
         ->name('orders.detail');
 });
 

@@ -139,7 +139,7 @@
                                     </div>
 
                                     {{-- ITEMS --}}
-                                    <div class="space-y-2 mb-4">
+                                    {{-- <div class="space-y-2 mb-4">
                                         @foreach ($order->items as $item)
                                             <div class="flex justify-between text-sm">
                                                 <span>
@@ -150,7 +150,7 @@
                                                 </span>
                                             </div>
                                         @endforeach
-                                    </div>
+                                    </div> --}}
 
                                     {{-- TOTAL --}}
                                     <div class="flex justify-between items-center border-t pt-4">
