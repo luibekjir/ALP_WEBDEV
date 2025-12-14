@@ -14,7 +14,7 @@ Route::get('/aboutus', [HomeController::class, 'about']);
 
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/gallery/{gallery}', [GalleryController::class, 'show'])->name('gallery.show');
-Route::post('/gallery', [GalleryController::class, 'store'])->name('gallery.store')->middleware('admin');
+Route::post('/gallery/store', [GalleryController::class, 'store'])->name('gallery.store')->middleware('admin');
 
 Route::get('/product', [ProductController::class, 'index']);
 Route::post('/product', [ProductController::class, 'store'])->name('product.store')->middleware('admin');
@@ -42,15 +42,14 @@ Route::post('reset-password', [UserController::class, 'reset'])->name('password.
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
-    Route::get('/profile/{user}', [UserController::class, 'showProfile'])->name('profile.show');
-    Route::get('/profile/{user}/edit', [UserController::class, 'editProfile'])->name('profile.edit');
-    Route::post('/profile/{user}', [UserController::class, 'updateProfile'])->name('profile.update');
-    Route::get('/profile/{user}/change-password', [UserController::class, 'changePasswordForm'])->name('profile.change-password');
-    Route::post('/profile/{user}/change-password', [UserController::class, 'updatePassword'])->name('profile.update-password');
+    Route::put('/profile/{user}', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::put('/profile/{user}/change-password', [UserController::class, 'changePasswordForm'])->name('profile.change-password');
+    
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
     // Gallery comments
     Route::post('/gallery/{gallery}/comment', [GalleryController::class, 'storeComment'])->name('gallery.comment');
+    Route::delete('/gallery/{comment}/delete-comment', [GalleryController::class, 'deleteComment'])->name('gallery.delete-comment');
 
     // Route::get('/orders/create/{product}', [OrderController::class, 'create'])->name('orders.create');
     // Route::post('/orders/{product}', [OrderController::class, 'store'])->name('orders.store');
