@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
+use App\Models\User;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -41,7 +42,10 @@ Route::post('reset-password', [UserController::class, 'reset'])->name('password.
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
     Route::put('/profile/{user}', [UserController::class, 'updateProfile'])->name('profile.update');
-    Route::put('/profile/{user}/change-password', [UserController::class, 'changePasswordForm'])->name('profile.change-password');
+    Route::get('/profile/change-password', [UserController::class, 'changePasswordForm'])->name('profile.change-password');
+    Route::put('/profile/{user}/update-password', [UserController::class, 'updatePassword'])->name('profile.password-update');
+    Route::delete('/profile/delete-account', [UserController::class, 'destroy'])->name('profile.destroy');
+
     
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
