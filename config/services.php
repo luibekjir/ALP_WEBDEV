@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'komerce' => [
+    'key' => env('KOMERCE_API_KEY'),
+    'url' => env('KOMERCE_BASE_URL'),
+],
+
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
