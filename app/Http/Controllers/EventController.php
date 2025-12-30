@@ -13,11 +13,6 @@ class EventController extends Controller
         return view('event', compact('events'));
     }
 
-    public function create()
-    {
-        return view('event');
-    }
-
     public function store(Request $request)
 {
     // Validasi input

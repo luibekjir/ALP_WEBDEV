@@ -13,50 +13,32 @@
 <div class="w-full bg-[#FFF8F6] min-h-screen">
     <div class="container mx-auto py-12 px-6">
 
-        {{-- Alert --}}
-        @if (session('success'))
-            <div class="mb-6 bg-green-100 text-green-800 px-4 py-3 rounded-lg">
-                {{ session('success') }}
-            </div>
-        @endif
-
         @if ($carts->isEmpty())
-            {{-- Empty --}}
             <div class="bg-white rounded-2xl shadow-md p-12 text-center">
-                <div class="text-6xl mb-4">🛒</div>
                 <h2 class="text-2xl font-bold text-[#5F1D2A]">Keranjang Kosong</h2>
-                <a href="/product"
+                <a href="{{ route('product') }}"
                    class="inline-block mt-6 bg-[#5F1D2A] text-white px-6 py-3 rounded-xl">
                     Belanja Sekarang
                 </a>
             </div>
         @else
 
-        {{-- ===================== --}}
-        {{-- CHECKOUT FORM (ONLY) --}}
-        {{-- ===================== --}}
-        <form id="checkout-form" action="{{ route('checkout.prepare') }}" method="POST">
-            @csrf
-        </form>
-
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {{-- ===================== --}}
-            {{-- CART LIST (LEFT) --}}
-            {{-- ===================== --}}
+            {{-- ================= LEFT: CART LIST ================= --}}
             <div class="lg:col-span-2 space-y-6">
 
                 @foreach ($carts as $cart)
                     <div class="bg-white rounded-2xl shadow-md p-6 flex gap-4 items-start">
 
-                        {{-- CHECKBOX --}}
+                        {{-- CHECKBOX (DIPAKAI OLEH FORM CHECKOUT DI KANAN) --}}
                         <input type="checkbox"
+                               form="checkout-form"
                                name="cart_ids[]"
                                value="{{ $cart->id }}"
-                               form="checkout-form"
-                               class="mt-2 w-5 h-5 text-[#5F1D2A]">
+                               class="mt-2 w-5 h-5 checkout-checkbox"
+                               data-subtotal="{{ $cart->product->price * $cart->quantity }}">
 
-                        {{-- IMAGE --}}
                         <div class="w-28 h-28 bg-[#F8D9DF] rounded-xl overflow-hidden">
                             @if ($cart->product->image_url)
                                 <img src="{{ asset('storage/'.$cart->product->image_url) }}"
@@ -64,67 +46,49 @@
                             @endif
                         </div>
 
-                        {{-- INFO --}}
                         <div class="flex-1">
-                            <h3 class="font-bold text-[#5F1D2A]">
-                                {{ $cart->product->name }}
-                            </h3>
-
+                            <h3 class="font-bold text-[#5F1D2A]">{{ $cart->product->name }}</h3>
                             <p class="text-sm text-[#5F1D2A]/70">
                                 Rp {{ number_format($cart->product->price, 0, ',', '.') }}
                             </p>
 
-                            {{-- QUANTITY --}}
+                            {{-- ACTION BUTTONS (FORM SENDIRI) --}}
                             <div class="flex items-center gap-2 mt-3">
 
-                                {{-- MINUS --}}
                                 <form action="{{ route('cart.update', $cart->id) }}" method="POST">
-                                    @csrf
-                                    @method('PATCH')
-                                    <button class="px-3 py-1 bg-[#F8D9DF] rounded">−</button>
+                                    @csrf @method('PATCH')
+                                    <button type="submit" class="px-3 py-1 bg-[#F8D9DF] rounded">−</button>
                                 </form>
 
                                 <span class="font-semibold">{{ $cart->quantity }}</span>
 
-                                {{-- PLUS --}}
                                 <form action="{{ route('cart.add', $cart->product_id) }}" method="POST">
                                     @csrf
-                                    <button class="px-3 py-1 bg-[#F8D9DF] rounded">+</button>
+                                    <button type="submit" class="px-3 py-1 bg-[#F8D9DF] rounded">+</button>
                                 </form>
 
-                                {{-- DELETE --}}
-                                <form action="{{ route('cart.destroy', $cart->id) }}" method="POST" class="ml-4">
-                                    @csrf
-                                    @method('DELETE')
+                                <form action="{{ route('cart.destroy', $cart->id) }}" method="POST">
+                                    @csrf @method('DELETE')
                                     <button class="text-red-600 text-sm">Hapus</button>
                                 </form>
                             </div>
                         </div>
 
-                        {{-- SUBTOTAL --}}
-                        <div class="text-right min-w-[120px]">
-                            <p class="text-sm text-[#5F1D2A]/60">Subtotal</p>
-                            <p class="font-bold text-[#5F1D2A]">
-                                Rp {{ number_format($cart->product->price * $cart->quantity, 0, ',', '.') }}
-                            </p>
+                        <div class="text-right min-w-[120px] font-bold text-[#5F1D2A]">
+                            Rp {{ number_format($cart->product->price * $cart->quantity, 0, ',', '.') }}
                         </div>
                     </div>
                 @endforeach
-
             </div>
 
-            {{-- ===================== --}}
-            {{-- SUMMARY (RIGHT) --}}
-            {{-- ===================== --}}
-            <div class="bg-white rounded-2xl shadow-md p-6 h-fit sticky top-28">
+            {{-- ================= RIGHT: CHECKOUT ================= --}}
+            <form id="checkout-form"
+                  action="{{ route('checkout.prepare') }}"
+                  method="POST"
+                  class="bg-white rounded-2xl shadow-md p-6 h-fit sticky top-28">
+                @csrf
 
-                <h3 class="text-xl font-bold text-[#5F1D2A] mb-4">
-                    Ringkasan
-                </h3>
-
-                <p class="text-sm text-[#5F1D2A]/60 mb-4">
-                    * Total dihitung dari produk yang dipilih
-                </p>
+                <h3 class="text-xl font-bold text-[#5F1D2A] mb-4">Ringkasan</h3>
 
                 <div class="border-t pt-4 flex justify-between font-bold text-lg">
                     <span>Total</span>
@@ -132,41 +96,39 @@
                 </div>
 
                 <button type="submit"
-                        form="checkout-form"
                         class="w-full mt-6 bg-[#5F1D2A] text-white py-3 rounded-xl">
                     Lanjut ke Checkout
                 </button>
+            </form>
 
-            </div>
         </div>
         @endif
     </div>
 </div>
 
-{{-- ===================== --}}
-{{-- JS HITUNG TOTAL --}}
-{{-- ===================== --}}
+{{-- TOTAL JS --}}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const checkboxes = document.querySelectorAll('input[name="cart_ids[]"]');
+    const checkboxes = document.querySelectorAll('.checkout-checkbox');
     const totalEl = document.getElementById('total-price');
 
     function updateTotal() {
         let total = 0;
-
         checkboxes.forEach(cb => {
-            if (cb.checked) {
-                const card = cb.closest('.bg-white');
-                const subtotalText = card.querySelector('.text-right p.font-bold')
-                    .innerText.replace(/[^\d]/g, '');
-                total += parseInt(subtotalText);
-            }
+            if (cb.checked) total += Number(cb.dataset.subtotal);
         });
-
-        totalEl.innerText = 'Rp ' + total.toLocaleString('id-ID');
+        totalEl.textContent = 'Rp ' + total.toLocaleString('id-ID');
     }
 
     checkboxes.forEach(cb => cb.addEventListener('change', updateTotal));
+});
+
+document.getElementById('checkout-form').addEventListener('submit', function (e) {
+    const checked = document.querySelectorAll('.checkout-checkbox:checked');
+    if (checked.length === 0) {
+        e.preventDefault();
+        alert('Pilih minimal 1 produk untuk checkout');
+    }
 });
 </script>
 

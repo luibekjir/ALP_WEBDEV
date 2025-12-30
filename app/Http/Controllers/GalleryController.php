@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Gallery;
 use App\Models\GalleryComment;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
@@ -15,21 +16,16 @@ class GalleryController extends Controller
         return view('gallery', compact('gallery'));
     }
 
-    public function create()
-    {
-        return view('gallery');
-    }
-
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
+            'image'       => 'nullable|image|max:2048',
         ]);
 
         $gallery = new Gallery();
-        $gallery->title = $request->name;
+        $gallery->title = $request->title;
         $gallery->description = $request->description;
 
         if ($request->hasFile('image')) {
@@ -55,26 +51,42 @@ class GalleryController extends Controller
 
     public function update(Request $request, Gallery $gallery)
     {
+
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image' => 'nullable|image',
+            'image'       => 'nullable|image|max:2048',
         ]);
 
+        // 🔴 HAPUS FOTO LAMA JIKA ADA
         if ($request->hasFile('image')) {
-            $validated['image'] = $request->file('image')->store('galleries');
+            if ($gallery->image_url && Storage::disk('public')->exists($gallery->image_url)) {
+                Storage::disk('public')->delete($gallery->image_url);
+            }
+
+            // ✅ SIMPAN KE storage/app/public/gallery
+            $validated['image_url'] = $request->file('image')
+                ->store('gallery', 'public');
         }
 
         $gallery->update($validated);
 
-        return redirect()->route('gallery.index')->with('success', 'Gallery updated successfully.');
+        return back()->with('success', 'Koleksi berhasil diperbarui');
     }
 
     public function destroy(Gallery $gallery)
     {
+        if (Auth::user()->role !== 'admin') {
+            abort(403);
+        }
+
+        if ($gallery->image_url && Storage::disk('public')->exists($gallery->image_url)) {
+            Storage::disk('public')->delete($gallery->image_url);
+        }
+
         $gallery->delete();
 
-        return redirect()->route('gallery.index')->with('success', 'Gallery deleted successfully.');
+        return back()->with('success', 'Koleksi berhasil dihapus');
     }
 
     public function storeComment(Request $request, Gallery $gallery)

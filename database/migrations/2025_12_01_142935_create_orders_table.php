@@ -30,11 +30,9 @@ return new class extends Migration {
             $table->integer('shipping_cost')->default(0);
 
             // Payment
-            $table->string('payment_method')->nullable();
-
-            // Order info
-            $table->integer('total_price')->default(0);
-            $table->string('status')->default('pending');
+            $table->integer('total_price');
+            $table->enum('status', ['pending', 'success', 'failed'])->default('pending');
+            $table->string('snap_token')->nullable();
 
             $table->timestamps();
         });
