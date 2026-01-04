@@ -12,19 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('events', function (Blueprint $table) {
-    $table->id();
-    $table->string('title');
-    $table->text('description');
-    $table->string('image_url')->nullable();
-    $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
-    $table->dateTime('date')->nullable();
-    $table->decimal('price', 10, 2)->nullable();
-    $table->unsignedBigInteger('created_by')->nullable(); // <-- tambah ini
-    $table->unsignedBigInteger('updated_by')->nullable(); // <-- tambah ini
-    $table->timestamps();
-});
-
-
+            $table->id();
+            $table->string('title');
+            $table->text('description');
+            $table->string('image_url')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->dateTime('start');
+            $table->dateTime('end');
+            // $table->decimal('price', 10, 2)->nullable();
+            $table->unsignedBigInteger('created_by')->nullable(); // <-- tambah ini
+            $table->unsignedBigInteger('updated_by')->nullable(); // <-- tambah ini
+            $table->timestamps();
+        });
     }
 
     /**

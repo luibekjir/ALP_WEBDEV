@@ -9,9 +9,11 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\GoogleCalendarController;
 use App\Http\Controllers\OrderController;
 use App\Models\Order;
 use App\Models\Product;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -57,6 +59,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('/admin/orders', [AdminOrderController::class, 'index'])
         ->name('admin.orders.index');
+
+    Route::put('/event/{event}', [EventController::class, 'update'])->name('event.update');
+    Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('event.destroy');
 });
 
 Route::middleware('auth')->group(function () {
@@ -75,6 +80,15 @@ Route::middleware('auth')->group(function () {
 
     // Route::get('/orders/create/{product}', [OrderController::class, 'create'])->name('orders.create');
     // Route::post('/orders/{product}', [OrderController::class, 'store'])->name('orders.store');
+
+    // Route::get('/google/connect', [GoogleCalendarController::class, 'redirect'])
+    //     ->name('google.redirect');
+
+    // Route::get('/google/callback', [GoogleCalendarController::class, 'callback'])
+    //     ->name('google.callback');
+
+    Route::post('/event/{event}/register', [EventController::class, 'addToCalendar'])
+    ->name('event.register');
 });
 
 Route::middleware('auth')->group(function () {
@@ -122,10 +136,16 @@ Route::middleware('auth')->group(function () {
         ->name('payment.success');
 });
 
-
-
-
 Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'detail'])
         ->name('orders.detail');
+});
+
+Route::get('/test-email', function () {
+    Mail::raw('EMAIL TEST DARI LARAVEL', function ($message) {
+        $message->to('lnathaniel@student.ciputra.ac.id')
+                ->subject('Test Email Laravel');
+    });
+
+    return 'EMAIL TERKIRIM (cek inbox / spam)';
 });

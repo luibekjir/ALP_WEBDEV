@@ -13,7 +13,7 @@ class GalleryController extends Controller
     public function index()
     {
         $gallery = Gallery::all();
-        return view('gallery', compact('gallery'));
+    return view('gallery', compact('gallery'));
     }
 
     public function store(Request $request)
