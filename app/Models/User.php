@@ -78,11 +78,6 @@ class User extends Authenticatable
     //     return $this->belongsToMany(Gallery::class, 'gallery_comments');
     // }
     
-    public function events()
-{
-    return $this->belongsToMany(Event::class)
-                ->withTimestamps();
-}
 
 public function addresses()
 {
