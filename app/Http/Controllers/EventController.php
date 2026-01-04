@@ -110,4 +110,11 @@ class EventController extends Controller
 
         return back()->with('success', 'Berhasil mendaftar ke event! Tambahkan event ke Google Calendarmu melalui email yang kita kirim!');
     }
+
+    public function register(Event $event)
+{
+    Auth::user()->events()->syncWithoutDetaching($event->id);
+
+    return back()->with('success', 'Berhasil mendaftar acara');
+}
 }

@@ -139,6 +139,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'detail'])
         ->name('orders.detail');
+
 });
 
 Route::get('/test-email', function () {

@@ -108,6 +108,66 @@
                     </div>
                 </div>
 
+                {{-- EVENT HISTORY --}}
+                <div class="bg-white border border-[#B8A5A8] rounded-xl shadow-md p-8 mb-8">
+                    <h3 class="text-xl font-bold text-[#5F1D2A] mb-6">
+                        Riwayat Event
+                    </h3>
+
+                    @if ($events->isEmpty())
+                        <div class="text-center py-10 text-[#5F1D2A]/60">
+                            <p>Belum pernah mendaftar event</p>
+                        </div>
+                    @else
+                        <div class="space-y-5">
+                            @foreach ($events as $event)
+                                @php
+                                    $isPast = $event->date && $event->date->isPast();
+                                @endphp
+
+                                <div class="border border-[#B8A5A8]/30 rounded-xl p-5">
+
+                                    {{-- HEADER --}}
+                                    <div class="flex justify-between items-center mb-3">
+                                        <div>
+                                            <p class="font-semibold text-[#5F1D2A]">
+                                                {{ $event->title }}
+                                            </p>
+                                            <p class="text-sm text-[#5F1D2A]/60">
+                                                {{ $event->date?->format('d M Y, H:i') ?? 'Tanggal belum ditentukan' }}
+                                            </p>
+                                        </div>
+
+                                        {{-- STATUS --}}
+                                        <span
+                                            class="px-3 py-1 rounded-full text-sm font-semibold
+                            {{ $isPast ? 'bg-gray-100 text-gray-700' : 'bg-green-100 text-green-700' }}">
+                                            {{ $isPast ? 'Selesai' : 'Upcoming' }}
+                                        </span>
+                                    </div>
+
+                                    {{-- INFO --}}
+                                    <div class="flex justify-between text-sm text-[#5F1D2A]/80">
+                                        <span>
+                                            Daftar:
+                                            {{ $event->pivot->registered_at ? \Carbon\Carbon::parse($event->pivot->registered_at)->format('d M Y') : '-' }}
+                                        </span>
+
+                                        <span class="font-semibold">
+                                            @if ($event->price)
+                                                Rp {{ number_format($event->price, 0, ',', '.') }}
+                                            @else
+                                                Gratis
+                                            @endif
+                                        </span>
+                                    </div>
+
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
 
                 {{-- ORDER HISTORY --}}
                 <div class="bg-white border border-[#B8A5A8] rounded-xl shadow-md p-8 mb-8">
@@ -173,14 +233,14 @@
 
                                     {{-- ACTION --}}
                                     {{-- NEXT STEP --}}
-                                    
-                    <div class="mt-4 text-right">
-                        <a href="{{ route('orders.detail', $order) }}"
-                           class="text-[#5F1D2A] hover:underline font-semibold">
-                            Lihat Detail
-                        </a>
-                    </div>
-                   
+
+                                    <div class="mt-4 text-right">
+                                        <a href="{{ route('orders.detail', $order) }}"
+                                            class="text-[#5F1D2A] hover:underline font-semibold">
+                                            Lihat Detail
+                                        </a>
+                                    </div>
+
                                 </div>
                             @endforeach
                         </div>
@@ -210,13 +270,13 @@
                            class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">
                             Ubah
                         </a> --}}
-                        <form action="{{ route('profile.change-password', $user) }}" method="POST">
-                            @csrf
-                            @method('PUT')
-                            <button type="submit" id="change-password"
-                                class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">Ubah</button>
-                        </form>
-                    </div>
+                            <form action="{{ route('profile.change-password', $user) }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <button type="submit" id="change-password"
+                                    class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">Ubah</button>
+                            </form>
+                        </div>
 
                         {{-- <div class="flex items-center justify-between p-4 bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg">
                         <div>
@@ -277,7 +337,8 @@
                         <!-- Email -->
                         <div>
                             <label for="email" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Email</label>
-                            <input type="email" id="email" name="email" value="{{ old('email', $user->email) }}"
+                            <input type="email" id="email" name="email"
+                                value="{{ old('email', $user->email) }}"
                                 class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
                                 required>
                             @error('email')
@@ -289,7 +350,8 @@
                         <div>
                             <label for="phone" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Nomor
                                 Telepon</label>
-                            <input type="tel" id="phone" name="phone" value="{{ old('phone', $user->phone) }}"
+                            <input type="tel" id="phone" name="phone"
+                                value="{{ old('phone', $user->phone) }}"
                                 class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent"
                                 placeholder="Contoh: 081234567890">
                             @error('phone')
@@ -353,11 +415,10 @@
         });
 
         function confirmDeleteAccount() {
-        return confirm(
-            '⚠️ Apakah Anda yakin ingin menghapus akun ini?\n\nTindakan ini TIDAK dapat dibatalkan.'
-        );
-    }
-
+            return confirm(
+                '⚠️ Apakah Anda yakin ingin menghapus akun ini?\n\nTindakan ini TIDAK dapat dibatalkan.'
+            );
+        }
     </script>
 
 @endsection
