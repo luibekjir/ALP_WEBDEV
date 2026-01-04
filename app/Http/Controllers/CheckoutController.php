@@ -27,30 +27,30 @@ class CheckoutController extends Controller
     /**
      * TAMPILKAN HALAMAN CHECKOUT (GET)
      */
-    public function index()
-    {
-        $cartIds = session('checkout_cart_ids');
+    // public function index()
+    // {
+    //     $cartIds = session('checkout_cart_ids');
 
-        if (!$cartIds) {
-            return redirect()->route('cart.index')
-                ->withErrors('Silakan pilih produk terlebih dahulu.');
-        }
+    //     if (!$cartIds) {
+    //         return redirect()->route('cart.index')
+    //             ->withErrors('Silakan pilih produk terlebih dahulu.');
+    //     }
 
-        $items = Cart::with('product')
-            ->where('user_id', Auth::id())
-            ->whereIn('id', $cartIds)
-            ->get();
+    //     $items = Cart::with('product')
+    //         ->where('user_id', Auth::id())
+    //         ->whereIn('id', $cartIds)
+    //         ->get();
 
-        if ($items->isEmpty()) {
-            return redirect()->route('cart.index');
-        }
+    //     if ($items->isEmpty()) {
+    //         return redirect()->route('cart.index');
+    //     }
 
-        $subtotal = $items->sum(fn ($c) =>
-            $c->product->price * $c->quantity
-        );
+    //     $subtotal = $items->sum(fn ($c) =>
+    //         $c->product->price * $c->quantity
+    //     );
 
-        return view('checkout', compact('items', 'subtotal'));
-    }
+    //     return view('product-checkout', compact('items', 'subtotal'));
+    // }
 
     /**
      * SIMPAN ORDER

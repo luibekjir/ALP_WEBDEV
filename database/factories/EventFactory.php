@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Event;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 
@@ -30,8 +31,9 @@ class EventFactory extends Factory
             'description' => $this->faker->paragraph,
             'image_url' => $this->faker->imageUrl(640, 480, 'events', true),
             'user_id' => $this->faker->numberBetween(1, 10),
-            'date' => $this->faker->dateTimeBetween('+1 week', '+1 month'),
-            'price' => $this->faker->randomFloat(2, 0, 1000),
+            'start' => $start = $this->faker->dateTimeBetween('+1 week', '+1 month'),
+            'end'   => Carbon::parse($start)->addHours(rand(1, 5)),
+            // 'price' => $this->faker->randomFloat(2, 0, 1000),
             'created_by' => $this->faker->numberBetween(1, 10),
             'updated_by' => $this->faker->numberBetween(1, 10),
         ];

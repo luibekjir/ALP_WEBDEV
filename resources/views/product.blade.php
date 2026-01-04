@@ -15,14 +15,36 @@
 
                 {{-- Button untuk membuka modal --}}
                 @if (Auth::check() && Auth::user()->role === 'admin')
-                    <div class="fixed bottom-8 right-8">
+                    <div class="fixed bottom-8 right-8 z-50">
                         <button id="openProductModal"
                             class="bg-[#5F1D2A] text-white px-5 py-3 rounded-full shadow-lg hover:bg-[#4a1620] transition">
                             + Tambah Produk
                         </button>
                     </div>
                 @endif
+                @if (session('success'))
+                    <div class="fixed top-6 right-6 z-50 bg-green-500 text-white px-6 py-4 rounded-lg shadow-lg animate-bounce"
+                        role="alert">
+                        {{ session('success') }}
+                    </div>
+                    <script>
+                        setTimeout(() => {
+                            document.querySelector('[role="alert"]').remove();
+                        }, 3000);
+                    </script>
+                @endif
 
+                @if (session('error'))
+                    <div class="fixed top-6 right-6 z-50 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg animate-bounce"
+                        role="alert">
+                        {{ session('error') }}
+                    </div>
+                    <script>
+                        setTimeout(() => {
+                            document.querySelector('[role="alert"]').remove();
+                        }, 3000);
+                    </script>
+                @endif
                 {{-- Sidebar Kategori --}}
                 <aside class="w-full lg:w-1/4">
                     <div class="bg-white border border-[#B8A5A8] p-6 rounded-xl shadow-sm sticky top-8">
@@ -80,12 +102,12 @@
                             </p>
                         </div>
                     @else
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
                             @foreach ($products as $product)
                                 <div
-                                    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition duration-300 overflow-hidden flex flex-col h-full group">
+                                    class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden flex flex-col h-full group relative">
 
-                                    {{-- Image --}}
+                                    {{-- IMAGE --}}
                                     <div class="h-64 relative overflow-hidden rounded-t-2xl">
                                         @if ($product->image_url)
                                             <img src="{{ asset('storage/' . $product->image_url) }}"
@@ -98,42 +120,102 @@
                                         @endif
                                     </div>
 
-                                    {{-- Content --}}
+                                    {{-- CONTENT --}}
                                     <div class="p-5 flex flex-col flex-grow">
+
+                                        {{-- CATEGORY --}}
                                         <span class="text-xs text-[#5F1D2A]/60 mb-1 uppercase tracking-wider">
                                             {{ $product->category->name ?? 'Batik' }}
                                         </span>
 
-                                        <h3 class="text-lg font-bold text-[#5F1D2A] mb-2 line-clamp-2 leading-tight">
+                                        {{-- NAME --}}
+                                        <h3 class="text-lg font-bold text-[#5F1D2A] mb-1 line-clamp-2 leading-tight">
                                             {{ $product->name }}
                                         </h3>
 
+                                        {{-- STOCK --}}
                                         <span class="text-sm text-[#5F1D2A]/80 mb-3">
                                             Stok: {{ $product->stock }}
                                         </span>
 
-                                        <div
-                                            class="mt-auto flex items-center justify-between pt-3 border-t border-[#B8A5A8]/20">
-                                            <span class="text-[#5F1D2A] font-bold text-base">
-                                                Rp {{ number_format($product->price, 0, ',', '.') }}
-                                            </span>
+                                        {{-- FOOTER --}}
+                                        <div class="mt-auto pt-4 border-t border-[#B8A5A8]/20">
 
+                                            {{-- PRICE --}}
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-[#5F1D2A] font-bold text-lg">
+                                                    Rp {{ number_format($product->price, 0, ',', '.') }}
+                                                </span>
+                                            </div>
+
+                                            {{-- USER ACTION --}}
                                             @auth
-                                                <form action="{{ route('cart.add', $product->id) }}" method="POST">
-                                                    @csrf
-                                                    <button type="submit"
-                                                        class="bg-[#5F1D2A] text-white px-4 py-2 rounded-lg hover:bg-[#4a1620] transition font-semibold">
-                                                        Beli
-                                                    </button>
-                                                </form>
+                                                <div class="flex gap-2 mb-3">
+
+                                                    {{-- ADD TO CART --}}
+                                                    @if ($product->stock > 0)
+                                                        <form action="{{ route('cart.add', $product->id) }}" method="POST"
+                                                            class="flex-1">
+                                                            @csrf
+                                                            <button type="submit"
+                                                                class="w-full bg-[#5F1D2A] text-white py-2 rounded-lg hover:bg-[#4a1620] transition text-sm font-semibold">
+                                                                + Keranjang
+                                                            </button>
+                                                        </form>
+                                                    @else
+                                                        <button
+                                                            class="flex-1 bg-gray-300 text-gray-500 py-2 rounded-lg cursor-not-allowed text-sm font-semibold"
+                                                            disabled>
+                                                            Stok Habis
+                                                        </button>
+                                                    @endif
+
+                                                    {{-- BUY NOW --}}
+                                                    @if ($product->stock > 0)
+                                                        <form action="{{ route('checkout.buy-now', $product) }}" method="GET"
+                                                            class="flex-1">
+                                                            <button type="submit"
+                                                                class="w-full bg-[#FFD6E0] text-[#5F1D2A] py-2 rounded-lg hover:bg-[#F8D9DF] transition text-sm font-semibold border border-[#5F1D2A]/30">
+                                                                Beli
+                                                            </button>
+                                                        </form>
+                                                    @endif
+
+                                                </div>
                                             @else
                                                 <a href="{{ url('/login') }}"
-                                                    class="bg-gray-400 text-white px-4 py-2 rounded-lg font-semibold">
+                                                    class="block w-full text-center bg-gray-400 text-white py-2 rounded-lg font-semibold mb-3">
                                                     Login
                                                 </a>
                                             @endauth
-                                        </div>
 
+                                            {{-- ADMIN ACTION (BATAS GARIS BARU) --}}
+                                            @if (Auth::check() && Auth::user()->role === 'admin')
+                                                <div class="pt-3 border-t border-[#B8A5A8]/20 flex gap-2">
+                                                    <button type="button" onclick="openEditModal(this)"
+                                                        data-id="{{ $product->id }}" data-name="{{ $product->name }}"
+                                                        data-price="{{ $product->price }}"
+                                                        data-stock="{{ $product->stock }}"
+                                                        data-description="{{ $product->description }}"
+                                                        data-category="{{ $product->category_id }}"
+                                                        class="flex-1 px-3 py-2 text-sm bg-yellow-400 text-white rounded-lg hover:bg-yellow-500 transition">
+                                                        Edit
+                                                    </button>
+
+                                                    <form action="{{ route('product.destroy', $product->id) }}"
+                                                        method="POST" class="flex-1"
+                                                        onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button
+                                                            class="w-full px-3 py-2 text-sm bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                                                            Hapus
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            @endif
+
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
@@ -145,10 +227,60 @@
         </div>
     </div>
 
+    {{-- MODAL EDIT PRODUCT --}}
+    <div id="editProductModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
 
+        <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 relative">
+            <button onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
+                ✕
+            </button>
+
+            <h2 class="text-2xl font-bold text-[#5F1D2A] mb-4">Edit Produk</h2>
+
+            <form id="editProductForm" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+
+                <input type="hidden" name="category_id" id="edit-category">
+
+                <div class="mb-3">
+                    <label class="block text-sm font-medium">Nama</label>
+                    <input type="text" name="name" id="edit-name" class="w-full border rounded px-3 py-2"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-medium">Harga</label>
+                    <input type="number" name="price" id="edit-price" class="w-full border rounded px-3 py-2"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-medium">Stok</label>
+                    <input type="number" name="stock" id="edit-stock" class="w-full border rounded px-3 py-2"
+                        required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-medium">Deskripsi</label>
+                    <textarea name="description" id="edit-description" class="w-full border rounded px-3 py-2"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-medium">Gambar Baru (opsional)</label>
+                    <input type="file" name="image" class="w-full border rounded px-3 py-2">
+                </div>
+
+                <button type="submit" class="w-full bg-[#5F1D2A] text-white py-2 rounded mt-4">
+                    Update Produk
+                </button>
+            </form>
+        </div>
+    </div>
 
     {{-- Modal Create Product --}}
-    <div id="createProductModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div id="createProductModal"
+        class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div class="bg-white rounded-lg shadow-lg w-11/12 md:w-1/2 lg:w-1/3 p-6 relative">
             {{-- Close Button --}}
             <button id="closeProductModal" class="absolute top-4 right-4 text-gray-500 hover:text-gray-800">
@@ -221,14 +353,41 @@
             const openModalBtn = document.getElementById('openProductModal');
             const closeModalBtn = document.getElementById('closeProductModal');
 
-            openModalBtn.addEventListener('click', () => modal.classList.remove('hidden'));
-            closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            if (openModalBtn) {
+                openModalBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+            }
+
+            if (closeModalBtn) {
+                closeModalBtn.addEventListener('click', () => modal.classList.add('hidden'));
+            }
 
             // Tutup modal jika klik di luar konten
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) modal.classList.add('hidden');
             });
         });
+
+        // ================= EDIT MODAL =================
+        function openEditModal(button) {
+            const id = button.dataset.id;
+
+            const form = document.getElementById('editProductForm');
+            form.action = `/product/${id}`;
+
+            document.getElementById('edit-name').value = button.dataset.name;
+            document.getElementById('edit-price').value = button.dataset.price;
+            document.getElementById('edit-stock').value = button.dataset.stock;
+            document.getElementById('edit-description').value = button.dataset.description ?? '';
+            document.getElementById('edit-category').value = button.dataset.category;
+
+            document.getElementById('editProductModal').classList.remove('hidden');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editProductModal').classList.add('hidden');
+        }
     </script>
+
+
 
 @endsection
