@@ -9,15 +9,17 @@ class Address extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'address',
-        'subdistrict',
-        'district',
-        'city',
-        'zip_code',
-        'is_default',
-    ];
+protected $fillable = [
+    'user_id',
+    'address',
+    'subdistrict',
+    'district',
+    'city',
+    'destination_id', // 🔥 INI KUNCINYA
+    'zip_code',
+    'is_default',
+];
+
 
     public function user()
     {

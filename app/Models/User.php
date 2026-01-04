@@ -18,14 +18,13 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'phone',
-        'address',
-        'role'
-    ];
+protected $fillable = [
+    'name',
+    'email',
+    'password',
+    'phone',
+    'role'
+];
 
     public $timestamps = false;
 
@@ -70,4 +69,15 @@ class User extends Authenticatable
     return $this->belongsToMany(Event::class)
                 ->withTimestamps();
 }
+
+public function addresses()
+{
+    return $this->hasMany(Address::class);
+}
+
+public function defaultAddress()
+{
+    return $this->hasOne(Address::class)->where('is_default', true);
+}
+
 }

@@ -1,14 +1,15 @@
 <?php
 
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\EventController;
+use App\Http\Controllers\AddressController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -19,7 +20,6 @@ Route::post('/gallery/store', [GalleryController::class, 'store'])->name('galler
 
 Route::get('/product', [ProductController::class, 'index']);
 Route::post('/product', [ProductController::class, 'store'])->name('product.store')->middleware('admin');
-
 
 Route::get('/event', [EventController::class, 'index']);
 Route::post('/event', [EventController::class, 'store'])->name('event.store')->middleware('admin');
@@ -48,7 +48,6 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/{user}/update-password', [UserController::class, 'updatePassword'])->name('profile.password-update');
     Route::delete('/profile/delete-account', [UserController::class, 'destroy'])->name('profile.destroy');
 
-    
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
     // Gallery comments
@@ -57,6 +56,11 @@ Route::middleware('auth')->group(function () {
 
     // Route::get('/orders/create/{product}', [OrderController::class, 'create'])->name('orders.create');
     // Route::post('/orders/{product}', [OrderController::class, 'store'])->name('orders.store');
+
+    Route::put('/address/{address}/default', [AddressController::class, 'setDefault'])
+        ->name('address.set-default')
+        ->middleware('auth');
+
 });
 
 Route::middleware('auth')->group(function () {
@@ -91,8 +95,12 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/checkout/confirm', [CheckoutController::class, 'store'])
         ->name('checkout.confirm');
-});
 
+    Route::post('/checkout/shipping-cost', [CheckoutController::class, 'getShippingCost'])
+        ->middleware('auth')
+        ->name('checkout.shipping-cost');
+
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/orders/{order}', [OrderController::class, 'detail'])
@@ -101,10 +109,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-Route::post('/event/{event}/register', [EventController::class, 'register'])
-    ->name('event.register');
+    Route::post('/event/{event}/register', [EventController::class, 'register'])
+        ->name('event.register');
 });
 
-
-
-
+Route::middleware('auth')->group(function () {
+    Route::post('/checkout/shipping-cost', [CheckoutController::class, 'shippingCost'])
+        ->name('checkout.shipping-cost')
+        ->middleware('auth');
+});

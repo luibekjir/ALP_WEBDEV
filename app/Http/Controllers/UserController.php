@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 use App\Models\Order;
+use App\Models\Address;
 
 class UserController extends Controller
 {
@@ -39,7 +40,12 @@ class UserController extends Controller
     ->orderByPivot('registered_at', 'desc')
     ->get();
 
-    return view('profile', compact('user', 'orders', 'events'));
+    $defaultAddress = $user->defaultAddress;
+    $addresses = $user->addresses;
+
+
+
+    return view('profile', compact('user', 'orders', 'events', 'defaultAddress', 'addresses'));
     }
     /**
      * Show the form for creating a new resource.
@@ -47,21 +53,37 @@ class UserController extends Controller
     public function create(Request $request)
     {
         $validated = $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'password'  => 'required|min:6|confirmed',
-            'phone'     => 'required|string|max:20',
-            'address'   => 'required|string|max:255',
-        ]);
+        'name'          => 'required|string|max:255',
+        'email'         => 'required|email|unique:users,email',
+        'phone'         => 'nullable|string|max:20',
+        'password'      => 'required|min:6|confirmed',
 
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'phone' => $validated['phone'],
-            'address' => $validated['address'],
-            'role' => 'user',
-        ]);
+        
+        'address'       => 'required|string',
+        'subdistrict'   => 'required|string',
+        'district'      => 'required|string',
+        'city'          => 'required|string',
+        'zip_code'      => 'required|string',
+    ]);
+
+        $user = User::create([
+        'name'     => $validated['name'],
+        'email'    => $validated['email'],
+        'phone'    => $validated['phone'] ?? null,
+        'password' => Hash::make($validated['password']),
+        'role'     => 'user',
+    ]);
+
+    // 2️⃣ Buat address pertama (DEFAULT)
+    Address::create([
+        'user_id'     => $user->id,
+        'address'     => $validated['address'],
+        'subdistrict' => $validated['subdistrict'],
+        'district'    => $validated['district'],
+        'city'        => $validated['city'],
+        'zip_code'    => $validated['zip_code'],
+        'is_default'  => true,
+    ]);
 
         return redirect('/login')->with('success', 'User created successfully!');
     }
@@ -152,11 +174,18 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:1000',
-        ]);
+    'name'        => 'required|string|max:255',
+    'email'       => 'required|email|unique:users',
+    'phone'       => 'nullable|string',
+    'password'    => 'required|confirmed|min:6',
+
+    // ADDRESS WAJIB
+    'address'     => 'required|string',
+    'subdistrict' => 'required|string',
+    'district'    => 'required|string',
+    'city'        => 'required|string',
+    'zip_code'    => 'required|string',
+]);
 
         $user->update($validated);
 

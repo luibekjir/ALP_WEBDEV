@@ -52,14 +52,29 @@
                             </div>
                         </div>
 
-                        <!-- Address -->
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat</label>
-                            <div
-                                class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80 min-h-20">
-                                {{ $user->address ?? 'Tidak diisi' }}
+                            <label class="block text-sm font-semibold text-[#5F1D2A] mb-2">
+                                Alamat Default
+                            </label>
+
+                            <div class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80">
+                                @if ($defaultAddress)
+                                    {{ $defaultAddress->address }},
+                                    {{ $defaultAddress->subdistrict }},
+                                    {{ $defaultAddress->district }},
+                                    {{ $defaultAddress->city }},
+                                    {{ $defaultAddress->zip_code }}
+                                @else
+                                    <span class="italic text-[#5F1D2A]/50">Belum ada alamat</span>
+                                @endif
                             </div>
+
+                            <button onclick="openAddressModal()"
+                                class="mt-3 text-sm font-semibold text-[#5F1D2A] underline hover:text-[#4a1620]">
+                                Ganti Alamat
+                            </button>
                         </div>
+
 
                         {{-- <!-- Member Since -->
                     <div>
@@ -388,7 +403,54 @@
         </div>
     </div>
 
+
+    <div id="addressModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
+
+                <div class="px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-[#5F1D2A]">
+                        Pilih Alamat
+                    </h3>
+                    <button onclick="closeAddressModal()" class="text-xl">&times;</button>
+                </div>
+
+                <div class="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+                    @foreach ($addresses as $address)
+                        <form action="{{ route('address.set-default', $address) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <button type="submit"
+                                class="w-full text-left border rounded-lg px-4 py-3
+                            {{ $address->is_default ? 'border-[#5F1D2A] bg-[#F8D9DF]' : 'border-gray-300 hover:bg-gray-50' }}">
+                                <p class="font-semibold text-[#5F1D2A]">
+                                    {{ $address->address }}
+                                </p>
+                                <p class="text-sm text-[#5F1D2A]/70">
+                                    {{ $address->district }}, {{ $address->city }}
+                                </p>
+                            </button>
+                        </form>
+                    @endforeach
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
     <script>
+        function openAddressModal() {
+            document.getElementById('addressModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddressModal() {
+            document.getElementById('addressModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
         // Modal functions
         function openEditModal() {
             document.getElementById('editModal').classList.remove('hidden');
