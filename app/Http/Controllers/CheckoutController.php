@@ -28,23 +28,23 @@ class CheckoutController extends Controller
     /**
      * STEP 2: Tampilkan halaman checkout
      */
-    public function index()
-    {
-        $cartIds = session('checkout_cart_ids');
+    // public function index()
+    // {
+    //     $cartIds = session('checkout_cart_ids');
 
         if (!$cartIds) {
             return redirect()->route('cart.index')
                 ->withErrors('Pilih produk terlebih dahulu.');
         }
 
-        $items = Cart::with('product')
-            ->where('user_id', Auth::id())
-            ->whereIn('id', $cartIds)
-            ->get();
+    //     $items = Cart::with('product')
+    //         ->where('user_id', Auth::id())
+    //         ->whereIn('id', $cartIds)
+    //         ->get();
 
-        if ($items->isEmpty()) {
-            return redirect()->route('cart.index');
-        }
+    //     if ($items->isEmpty()) {
+    //         return redirect()->route('cart.index');
+    //     }
 
         $user = Auth::user();
 
@@ -155,4 +155,4 @@ class CheckoutController extends Controller
         return redirect()->route('profile')
             ->with('success', 'Order berhasil dibuat!');
     }
-}
+

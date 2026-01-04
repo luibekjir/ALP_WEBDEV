@@ -20,9 +20,9 @@ class Order extends Model
         'city',
         'zip_code',
         'courier',
-        'payment_method',
         'total_price',
         'status',
+        'snap_token',
     ];
 
 

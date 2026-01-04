@@ -33,7 +33,7 @@ if (!$category) {
             'image_url'   => $this->faker->imageUrl(800, 600, 'nature', true),
             'name' => $this->faker->word,
             'description' => $this->faker->sentence,
-            'price' => $this->faker->randomFloat(2, 100, 10000),
+            'price' => $this->faker->numberBetween(100, 10000),
             'category_id' => $category->id,
             'stock' => $this->faker->numberBetween(1, 100),
             'created_by' => $this->faker->numberBetween(1, 10),

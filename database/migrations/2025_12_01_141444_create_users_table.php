@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->enum('role', ['admin', 'user'])->default('user');
             $table->rememberToken('remember');
-
+            $table->text('google_token')->nullable();
         });
     }
 

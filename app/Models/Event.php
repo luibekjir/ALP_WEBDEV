@@ -15,25 +15,25 @@ class Event extends Model
         'description',
         'image_url',
         'user_id',
-        'date',
-        'price',
+        'start',
+        'end',
+        // 'price',
         'created_by',
         'updated_by',
+        
     ];
 
     protected $casts = [
         'date' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        'price' => 'decimal:2',
+        // 'price' => 'decimal:2',
     ];
 
-public function users()
-{
-    return $this->belongsToMany(User::class)
-                ->withTimestamps();
-}
-
+    public function user()
+    {
+        return $this->belongsToMany(User::class);
+    }
 
     public function creator()
     {

@@ -1,15 +1,19 @@
 <?php
 
-use App\Http\Controllers\AddressController;
-use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AdminOrderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\GalleryController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\GoogleCalendarController;
+use App\Http\Controllers\OrderController;
+use App\Models\Order;
+use App\Models\Product;
+use Illuminate\Support\Facades\Mail;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -18,7 +22,7 @@ Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/gallery/{gallery}', [GalleryController::class, 'show'])->name('gallery.show');
 Route::post('/gallery/store', [GalleryController::class, 'store'])->name('gallery.store')->middleware('admin');
 
-Route::get('/product', [ProductController::class, 'index']);
+Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::post('/product', [ProductController::class, 'store'])->name('product.store')->middleware('admin');
 
 Route::get('/event', [EventController::class, 'index']);
@@ -37,9 +41,27 @@ Route::post('/register', [UserController::class, 'create'])->name('regist.user')
 Route::get('/forgot-password', [UserController::class, 'forgotPassword']);
 
 Route::post('/forgot-password', [UserController::class, 'sendResetLinkEmail'])->name('password.email');
-
 Route::get('reset-password/{token}', [UserController::class, 'showResetForm'])->name('password.reset');
 Route::post('reset-password', [UserController::class, 'reset'])->name('password.update');
+
+Route::middleware(['auth', 'admin'])->group(function () {
+
+    Route::put('/gallery/{gallery}', [GalleryController::class, 'update'])
+        ->name('gallery.update');
+    Route::delete('/gallery/{gallery}', [GalleryController::class, 'destroy'])
+        ->name('gallery.destroy');
+
+    Route::put('/product/{product}', [ProductController::class, 'update'])
+        ->name('product.update');
+    Route::delete('/product/{product}', [ProductController::class, 'destroy'])
+        ->name('product.destroy');
+
+    Route::get('/admin/orders', [AdminOrderController::class, 'index'])
+        ->name('admin.orders.index');
+
+    Route::put('/event/{event}', [EventController::class, 'update'])->name('event.update');
+    Route::delete('/event/{event}', [EventController::class, 'destroy'])->name('event.destroy');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [UserController::class, 'profile']);
@@ -57,10 +79,14 @@ Route::middleware('auth')->group(function () {
     // Route::get('/orders/create/{product}', [OrderController::class, 'create'])->name('orders.create');
     // Route::post('/orders/{product}', [OrderController::class, 'store'])->name('orders.store');
 
-    Route::put('/address/{address}/default', [AddressController::class, 'setDefault'])
-        ->name('address.set-default')
-        ->middleware('auth');
+    // Route::get('/google/connect', [GoogleCalendarController::class, 'redirect'])
+    //     ->name('google.redirect');
 
+    // Route::get('/google/callback', [GoogleCalendarController::class, 'callback'])
+    //     ->name('google.callback');
+
+    Route::post('/event/{event}/register', [EventController::class, 'addToCalendar'])
+    ->name('event.register');
 });
 
 Route::middleware('auth')->group(function () {
@@ -81,25 +107,31 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{cart}', [CartController::class, 'destroy'])
         ->name('cart.destroy');
 
-});
-
-Route::middleware('auth')->group(function () {
-
-    // 1️⃣ Terima cart_ids dari cart (POST)
-    Route::post('/checkout', [CheckoutController::class, 'prepare'])
+    Route::post('/checkout/prepare', [OrderController::class, 'prepare'])
         ->name('checkout.prepare');
-
-    // 2️⃣ Tampilkan halaman checkout (GET)
-    Route::get('/checkout', [CheckoutController::class, 'index'])
+    Route::get('/checkout', [OrderController::class, 'index'])
         ->name('checkout.index');
 
-    Route::post('/checkout/confirm', [CheckoutController::class, 'store'])
+    // BUY NOW
+    Route::get('/checkout/buy-now/{product}', [ProductController::class, 'buyNow'])
+        ->name('checkout.buy-now');
+
+    Route::post('/checkout/buy-now/create-order/{product}', [OrderController::class, 'create'])
+        ->name('create.order.buy-now');
+
+
+    // FINAL SUBMIT
+    Route::post('/checkout/confirm', [OrderController::class, 'store'])
         ->name('checkout.confirm');
 
-    Route::post('/checkout/shipping-cost', [CheckoutController::class, 'getShippingCost'])
-        ->middleware('auth')
-        ->name('checkout.shipping-cost');
 
+    Route::get('/show-payment/{order}', function (Order $order) {
+        return view('show-payment', compact('order'));
+    })->name('show-payment');
+    Route::post('/payment/cancel/{order}', [OrderController::class, 'cancel'])
+        ->name('payment.cancel');
+    Route::post('/payment/success/{order}', [OrderController::class, 'success'])
+        ->name('payment.success');
 });
 
 Route::middleware('auth')->group(function () {
@@ -108,13 +140,11 @@ Route::middleware('auth')->group(function () {
 
 });
 
-Route::middleware('auth')->group(function () {
-    Route::post('/event/{event}/register', [EventController::class, 'register'])
-        ->name('event.register');
-});
+Route::get('/test-email', function () {
+    Mail::raw('EMAIL TEST DARI LARAVEL', function ($message) {
+        $message->to('lnathaniel@student.ciputra.ac.id')
+                ->subject('Test Email Laravel');
+    });
 
-Route::middleware('auth')->group(function () {
-    Route::post('/checkout/shipping-cost', [CheckoutController::class, 'shippingCost'])
-        ->name('checkout.shipping-cost')
-        ->middleware('auth');
+    return 'EMAIL TERKIRIM (cek inbox / spam)';
 });

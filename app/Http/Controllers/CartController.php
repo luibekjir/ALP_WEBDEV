@@ -16,9 +16,15 @@ class CartController extends Controller
     {
         $userId = Auth::id();
 
+        if ($product->stock <= 0) {
+            return redirect()->back()->with('error', 'Stok produk habis');
+        }
+
         $cart = Cart::where('user_id', $userId)
             ->where('product_id', $product->id)
             ->first();
+
+
 
         if ($cart) {
             $cart->increment('quantity');
