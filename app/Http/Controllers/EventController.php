@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AddEventMail;
+use App\Mail\DeleteEventMail;
 use Illuminate\Http\Request;
 use App\Models\Event;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -79,7 +81,10 @@ class EventController extends Controller
         if ($event->image_url) {
             Storage::disk('public')->delete($event->image_url);
         }
-
+        $users = $event->user;
+        foreach($users as $user){
+            Mail::to($user->email)->send(new DeleteEventMail($event));   
+        }
         $event->delete();
         return back()->with('success', 'Acara berhasil dihapus');
     }
