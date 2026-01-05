@@ -135,7 +135,9 @@
 
                                         {{-- STOCK --}}
                                         <span class="text-sm text-[#5F1D2A]/80 mb-3">
-                                            Stok: {{ $product->stock }}
+                                            Stok: {{ $product->stock }}<br>
+                                            Berat: {{ $product->weight ?? '-' }} gram<br>
+                                            Rating: {{ $product->rating ?? '-' }}/5
                                         </span>
 
                                         {{-- FOOTER --}}
@@ -262,6 +264,16 @@
                 </div>
 
                 <div class="mb-3">
+                    <label class="block text-sm font-medium">Berat (gram)</label>
+                    <input type="number" name="weight" id="edit-weight" class="w-full border rounded px-3 py-2" min="0">
+                </div>
+
+                <div class="mb-3">
+                    <label class="block text-sm font-medium">Rating</label>
+                    <input type="number" name="rating" id="edit-rating" class="w-full border rounded px-3 py-2" min="0" max="5" step="0.1">
+                </div>
+
+                <div class="mb-3">
                     <label class="block text-sm font-medium">Deskripsi</label>
                     <textarea name="description" id="edit-description" class="w-full border rounded px-3 py-2"></textarea>
                 </div>
@@ -327,6 +339,18 @@
                 </div>
 
                 <div class="mb-4">
+                    <label for="weight" class="block text-sm font-medium text-[#5F1D2A]">Berat (gram)</label>
+                    <input type="number" name="weight" id="weight" value="0" min="0"
+                        class="mt-1 block w-full border border-[#B8A5A8] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5F1D2A]/50">
+                </div>
+
+                <div class="mb-4">
+                    <label for="rating" class="block text-sm font-medium text-[#5F1D2A]">Rating</label>
+                    <input type="number" name="rating" id="rating" value="0" min="0" max="5" step="0.1"
+                        class="mt-1 block w-full border border-[#B8A5A8] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5F1D2A]/50">
+                </div>
+
+                <div class="mb-4">
                     <label for="description" class="block text-sm font-medium text-[#5F1D2A]">Deskripsi</label>
                     <textarea name="description" id="description" rows="4"
                         class="mt-1 block w-full border border-[#B8A5A8] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5F1D2A]/50"></textarea>
@@ -379,6 +403,8 @@
             document.getElementById('edit-stock').value = button.dataset.stock;
             document.getElementById('edit-description').value = button.dataset.description ?? '';
             document.getElementById('edit-category').value = button.dataset.category;
+            document.getElementById('edit-weight').value = button.dataset.weight ?? '';
+            document.getElementById('edit-rating').value = button.dataset.rating ?? '';
 
             document.getElementById('editProductModal').classList.remove('hidden');
         }

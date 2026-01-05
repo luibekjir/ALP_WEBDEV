@@ -18,6 +18,14 @@ class AddressController extends Controller
 
         $address->update(['is_default' => true]);
 
+        if (request()->expectsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Alamat default diperbarui',
+                'address' => $address,
+            ]);
+        }
+
         return back()->with('success', 'Alamat default diperbarui');
     }
 
@@ -38,16 +46,10 @@ class AddressController extends Controller
         [$districtId, $districtName] = explode('|', $request->district);
         [$subId, $subName] = explode('|', $request->subdistrict);
 
-        // 🔥 DESTINATION ID DARI SUBDISTRICT
-        $dest = $this->komerce()
-            ->get("/api/v1/destination/sub-district/{$districtId}")
-            ->json('data');
-
-        $destinationId = collect($dest)
-            ->firstWhere('id', (int) $subId)['destination_id'] ?? null;
-
-        if (! $destinationId) {
-            return back()->withErrors(['subdistrict' => 'Destination tidak ditemukan']);
+        if (! $provinceName || ! $cityName || ! $districtName || ! $subName) {
+            return back()->withErrors([
+                'address' => 'Data wilayah tidak valid, silakan pilih ulang alamat',
+            ]);
         }
 
         Address::where('user_id', Auth::id())->update(['is_default' => false]);
@@ -65,7 +67,6 @@ class AddressController extends Controller
             'subdistrict_name' => $subName,
             'postal_code' => $request->postal_code,
             'extra_detail' => $request->extra_detail,
-            'destination_id' => $destinationId,
             'is_default' => true,
         ]);
 
@@ -75,35 +76,58 @@ class AddressController extends Controller
     private function komerce()
     {
         return Http::withHeaders([
+            'Accept' => 'application/json',
             'key' => config('services.komerce.key'),
         ])->baseUrl(rtrim(config('services.komerce.base_url'), '/'));
     }
 
     public function provinces()
     {
-        $res = $this->komerce()->get('/api/v1/destination/province');
+        $response = $this->komerce()->get('/api/v1/destination/province');
 
-        return response()->json($res->json('data') ?? []);
+        // Memeriksa apakah permintaan berhasil
+        if ($response->successful()) {
+
+            // Mengambil data provinsi dari respons JSON
+            // Jika 'data' tidak ada, inisialisasi dengan array kosong
+            $provinces = $response->json()['data'] ?? [];
+        }
+
+        // returning the  with provinces data
+        return response()->json($provinces);
     }
 
     public function cities($provinceId)
     {
         $res = $this->komerce()->get("/api/v1/destination/city/{$provinceId}");
 
+        if (! $res->successful()) {
+            Log::error('Komerce cities error', [
+                'status' => $res->status(),
+                'body' => $res->body(),
+            ]);
+
+            return response()->json([], 200); // ← PENTING: JANGAN 500
+        }
+
         return response()->json($res->json('data') ?? []);
     }
 
     public function districts($cityId)
     {
-        $res = $this->komerce()->get("/api/v1/destination/district/{$cityId}");
+        $res = \Illuminate\Support\Facades\Http::withHeaders([
+            'key' => config('services.komerce.key'),
+        ])->get("https://rajaongkir.komerce.id/api/v1/destination/district/{$cityId}");
 
-        return response()->json($res->json('data') ?? []);
+        return response()->json($res['data'] ?? []);
     }
 
     public function subdistricts($districtId)
     {
-        $res = $this->komerce()->get("/api/v1/destination/sub-district/{$districtId}");
+        $res = \Illuminate\Support\Facades\Http::withHeaders([
+            'key' => config('services.komerce.key'),
+        ])->get("https://rajaongkir.komerce.id/api/v1/destination/sub-district/{$districtId}");
 
-        return response()->json($res->json('data') ?? []);
+        return response()->json($res['data'] ?? []);
     }
 }

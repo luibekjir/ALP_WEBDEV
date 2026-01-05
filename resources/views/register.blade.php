@@ -163,50 +163,6 @@
                         @enderror
                     </div>
 
-                    {{-- ADDRESS --}}
-                    <div class="mt-4">
-                        <label class="block text-sm font-semibold mb-2">
-                            Alamat Pengiriman
-                        </label>
-
-                        <div class="space-y-3">
-
-                            {{-- Alamat Lengkap --}}
-                            <input type="text" name="address" placeholder="Alamat lengkap (jalan, nomor rumah, RT/RW)"
-                                value="{{ old('address') }}" required
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm">
-
-                            {{-- Grid Kelurahan & Kecamatan --}}
-                            <div class="grid grid-cols-2 gap-3">
-                                <input type="text" name="subdistrict" placeholder="Kelurahan"
-                                    value="{{ old('subdistrict') }}" required
-                                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm">
-
-                                <input type="text" name="district" placeholder="Kecamatan" value="{{ old('district') }}"
-                                    required
-                                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm">
-                            </div>
-
-                            {{-- Grid Kota & Kode Pos --}}
-                            <div class="grid grid-cols-2 gap-3">
-                                <input type="text" name="city" placeholder="Kota / Kabupaten"
-                                    value="{{ old('city') }}" required
-                                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm">
-
-                                <input type="text" name="zip_code" placeholder="Kode Pos" value="{{ old('zip_code') }}"
-                                    required
-                                    class="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-800 text-sm">
-                            </div>
-
-                        </div>
-
-                        {{-- ERROR --}}
-                        @if ($errors->hasAny(['address', 'subdistrict', 'district', 'city', 'zip_code']))
-                            <p class="text-red-600 text-sm mt-2">
-                                Lengkapi alamat dengan benar.
-                            </p>
-                        @endif
-                    </div>
 
 
                     {{-- PASSWORD --}}

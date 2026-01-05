@@ -14,14 +14,6 @@ return new class extends Migration {
                 ->constrained()
                 ->cascadeOnDelete();
 
-            $table->text('address');
-
-            // dari API destination
-            $table->string('subdistrict');
-            $table->string('district');
-            $table->string('city');
-            $table->string('zip_code');
-
             $table->boolean('is_default')->default(false);
 
             $table->timestamps();

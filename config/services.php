@@ -19,6 +19,13 @@ return [
         'base_url' => rtrim(env('KOMERCE_BASE_URL'), '/'),
     ],
 
+    'delivery' => [
+        'key_rajaongkir' => env('DELIVERY_API_KEY_RAJAONGKIR'),
+        'base_url_rajaongkir' => rtrim(env('DELIVERY_BASE_URL_RAJAONGKIR'), '/'),
+        'key_rajaongkir_sandbox' => env('DELIVERY_API_KEY_RAJAONGKIR_SANDBOX'),
+        'base_url_rajaongkir_sandbox' => rtrim(env('DELIVERY_BASE_URL_RAJAONGKIR_SANDBOX'), '/'),
+    ],
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],

@@ -10,6 +10,8 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\KomerceController;
+use App\Http\Controllers\AddressController;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Mail;
@@ -74,7 +76,7 @@ Route::middleware('auth')->group(function () {
         [AddressController::class, 'setDefault']
     )->name('address.set-default');
 
-    Route::post('/addresses', [AddressController::class, 'store'])
+    Route::post('/address', [AddressController::class, 'store'])
         ->name('address.store');
 
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
@@ -120,6 +122,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/checkout', [CheckoutController::class, 'index'])
         ->name('checkout.index');
 
+
+// Route cek ongkir harus bisa diakses tanpa login
+Route::post('/check-ongkir', [CheckoutController::class, 'checkOngkir'])->name('checkout.check-ongkir');
+
     // BUY NOW
     Route::get('/checkout/buy-now/{product}', [ProductController::class, 'buyNow'])
         ->name('checkout.buy-now');
@@ -128,7 +134,7 @@ Route::middleware('auth')->group(function () {
         ->name('create.order.buy-now');
 
     // FINAL SUBMIT
-    Route::post('/checkout/confirm', [OrderController::class, 'store'])
+    Route::patch('/checkout/confirm', [CheckoutController::class, 'confirm'])
         ->name('checkout.confirm');
 
     Route::get('/show-payment/{order}', function (Order $order) {
@@ -156,9 +162,9 @@ Route::get('/test-email', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/komerce/provinces', [KomerceController::class, 'provinces']);
-    Route::get('/komerce/cities/{provinceId}', [KomerceController::class, 'cities']);
-    Route::get('/komerce/districts/{cityId}', [KomerceController::class, 'districts']);
-    Route::get('/komerce/subdistricts/{districtId}', [KomerceController::class, 'subdistricts']);
+    Route::get('/komerce/provinces', [AddressController::class, 'provinces']);
+    Route::get('/komerce/cities/{provinceId}', [AddressController::class, 'cities']);
+    Route::get('/komerce/districts/{cityId}', [AddressController::class, 'districts']);
+    Route::get('/komerce/subdistricts/{districtId}', [AddressController::class, 'subdistricts']);
 
 });

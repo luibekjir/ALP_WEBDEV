@@ -72,8 +72,6 @@ class User extends Authenticatable
         return $this->belongsToMany(Event::class);
     }
 
-
-
     // public function commentedGalleries(){
     //     return $this->belongsToMany(Gallery::class, 'gallery_comments');
     // }

@@ -6,6 +6,8 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Services\KomerceService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use App\Models\Product;
 
 class CheckoutController extends Controller
 {
@@ -33,6 +35,20 @@ class CheckoutController extends Controller
         $addresses = $user->addresses;
         $defaultAddress = $addresses->where('is_default', true)->first();
 
+        // Ambil data provinsi dari Komerce/RajaOngkir API
+        $provinces = [];
+        try {
+            $response = \Illuminate\Support\Facades\Http::withHeaders([
+                'Accept' => 'application/json',
+                'key' => config('services.komerce.key'),
+            ])->get('https://rajaongkir.komerce.id/api/v1/destination/province');
+            if ($response->successful()) {
+                $provinces = $response->json('data') ?? [];
+            }
+        } catch (\Exception $e) {
+            $provinces = [];
+        }
+
         // ===== CHECKOUT DARI CART =====
         $carts = Cart::where('user_id', $user->id)
             ->with('product')
@@ -42,7 +58,8 @@ class CheckoutController extends Controller
             return view('product-checkout', compact(
                 'carts',
                 'addresses',
-                'defaultAddress'
+                'defaultAddress',
+                'provinces'
             ));
         }
 
@@ -53,7 +70,8 @@ class CheckoutController extends Controller
             return view('product-checkout', compact(
                 'product',
                 'addresses',
-                'defaultAddress'
+                'defaultAddress',
+                'provinces'
             ));
         }
 
@@ -65,36 +83,65 @@ class CheckoutController extends Controller
     /**
      * Hitung ongkir via Komerce / RajaOngkir
      */
-    public function shippingCost(Request $request, KomerceService $komerce)
+    public function checkOngkir(Request $request)
     {
-        $request->validate([
-            'courier' => 'required',
+        try {
+            $response = Http::asForm()->withHeaders([
+                'Accept' => 'application/json',
+                'key'    => config('services.komerce.key'),
+            ])->post('https://rajaongkir.komerce.id/api/v1/calculate/domestic-cost', [
+                'origin'      => 3855,
+                'destination' => $request->input('district_id'),
+                'weight'      => $request->input('weight'),
+                'courier'     => $request->input('courier'),
+            ]);
+
+            if ($response->successful()) {
+                return response()->json([
+                    'success' => true,
+                    'data'    => $response->json('data') ?? [],
+                ]);
+            }
+
+            \Log::warning('RajaOngkir checkOngkir gagal', [
+                'status' => $response->status(),
+                'body'   => $response->body(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghitung ongkir dari server pengiriman.',
+            ], 200);
+        } catch (\Throwable $e) {
+            \Log::error('RajaOngkir checkOngkir exception', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan pada server saat menghitung ongkir.',
+            ], 200);
+        }
+    }
+
+
+    /**
+     * Konfirmasi checkout (checkout.confirm)
+     */
+    public function confirm(Request $request)
+    {
+        // Validasi input sesuai kebutuhan
+        // Contoh validasi dasar:
+        $validated = $request->validate([
+            'receiver_name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'courier' => 'required|string',
         ]);
 
-        $address = auth()->user()
-            ->addresses()
-            ->where('is_default', true)
-            ->firstOrFail();
-
-        $items = Cart::with('product')
-            ->where('user_id', auth()->id())
-            ->get();
-
-        $weight = $items->sum(fn ($c) => ($c->product->weight ?? 1000) * $c->quantity
-        );
-
-        $subtotal = $items->sum(fn ($c) => $c->product->price * $c->quantity
-        );
-
-        $response = $komerce->calculateDomesticCost([
-            'origin_id' => 23, // kota toko
-            'destination_id' => $address->destination_id,
-            'weight' => $weight,
-            'item_value' => $subtotal,
-            'courier' => [$request->courier],
-        ]);
-
-        return response()->json($response);
+        // Simpan order atau proses checkout di sini
+        // Contoh: redirect ke halaman pembayaran dengan pesan sukses
+        return redirect()->route('checkout.index')->with('success', 'Checkout berhasil dikonfirmasi.');
     }
 
     /**

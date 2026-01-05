@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('price', 10, 2);
             $table->unsignedBigInteger('category_id'); // Foreign key for categories
             $table->integer('stock');
+            $table->decimal('weight', 8, 2)->nullable();
             $table->unsignedBigInteger('created_by')->nullable();
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->timestamps();

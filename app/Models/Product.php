@@ -18,6 +18,8 @@ class Product extends Model
         'stock',
         'created_by',
         'updated_by',
+        'weight',
+        'rating',
     ];
 
     protected $casts = [
@@ -32,4 +34,8 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function ratings()
+    {
+        return $this->hasMany(Rating::class);
+    }
 }

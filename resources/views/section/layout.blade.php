@@ -5,11 +5,18 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>@yield('title', 'Batik Bulau Sayang')</title>
-<script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script src="//unpkg.com/alpinejs" defer></script>
         <script src="https://cdn.tailwindcss.com"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
         @livewireStyles
+        <meta name="csrf-token" content="{{ csrf_token() }}">
 
         <style>
+            [x-cloak] {
+                display: none !important;
+            }
+
+
             /* Hover underline animation */
             .nav-hover::after {
                 content: "";

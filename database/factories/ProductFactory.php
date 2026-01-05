@@ -38,6 +38,7 @@ if (!$category) {
             'stock' => $this->faker->numberBetween(1, 100),
             'created_by' => $this->faker->numberBetween(1, 10),
             'updated_by' => $this->faker->numberBetween(1, 10),
+            'weight' => $this->faker->numberBetween(1, 100),
         ];
     }
 }

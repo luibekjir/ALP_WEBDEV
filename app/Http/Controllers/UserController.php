@@ -85,17 +85,8 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
             'password' => 'required|min:6|confirmed',
 
-            'address' => 'required|string',
-            'subdistrict' => 'required|string',
-            'district' => 'required|string',
-            'city' => 'required|string',
-            'zip_code' => 'required|string',
         ]);
 
-        // Split id|name untuk city, district, subdistrict
-        [$cityId, $cityName] = explode('|', $validated['city']);
-        [$districtId, $districtName] = explode('|', $validated['district']);
-        [$subdistrictId, $subdistrictName] = explode('|', $validated['subdistrict']);
 
         $user = User::create([
             'name' => $validated['name'],
@@ -105,19 +96,6 @@ class UserController extends Controller
             'role' => 'user',
         ]);
 
-        // 2️⃣ Buat address pertama (DEFAULT)
-        Address::create([
-            'user_id' => $user->id,
-            'address' => $validated['address'],
-            'city_id' => $cityId,
-            'city_name' => $cityName,
-            'district_id' => $districtId,
-            'district_name' => $districtName,
-            'subdistrict_id' => $subdistrictId,
-            'subdistrict_name' => $subdistrictName,
-            'zip_code' => $validated['zip_code'],
-            'is_default' => true,
-        ]);
 
         return redirect('/login')->with('success', 'User created successfully!');
     }

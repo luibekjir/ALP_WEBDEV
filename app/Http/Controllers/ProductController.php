@@ -67,6 +67,8 @@ class ProductController extends Controller
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
             'image' => 'nullable|image|max:2048',
+            'weight' => 'nullable|numeric|min:0',
+            'rating' => 'nullable|numeric|min:0|max:5',
         ]);
 
         if ($request->hasFile('image')) {
