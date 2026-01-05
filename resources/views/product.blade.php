@@ -46,9 +46,9 @@
                     </script>
                 @endif
                 {{-- Sidebar Kategori --}}
-                <aside class="w-full lg:w-1/4">
+                {{-- <aside class="w-full lg:w-1/4">
                     <div class="bg-white border border-[#B8A5A8] p-6 rounded-xl shadow-sm sticky top-8">
-                        <h3 class="text-xl font-semibold text-[#5F1D2A] mb-4 border-b border-[#B8A5A8]/30 pb-2">
+                        {{-- <h3 class="text-xl font-semibold text-[#5F1D2A] mb-4 border-b border-[#B8A5A8]/30 pb-2">
                             Kategori
                         </h3>
                         <ul class="space-y-3 text-[#5F1D2A]/80">
@@ -61,12 +61,12 @@
                             </li>
                             <li><a href="#" class="hover:text-[#5F1D2A] hover:font-bold transition">Dress Wanita</a>
                             </li>
-                        </ul>
+                        </ul> 
                     </div>
-                </aside>
+                </aside> --}}
 
                 {{-- Main Content --}}
-                <main class="w-full lg:w-3/4 flex flex-col gap-6">
+                <main class="w-full lg:w-4/4 flex flex-col gap-6">
 
                     {{-- Sorting & Count --}}
                     <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
@@ -74,7 +74,7 @@
                             Menampilkan <span class="font-bold">{{ $products->count() }}</span> produk
                         </p>
 
-                        <form action="{{ url()->current() }}" method="GET" class="flex items-center gap-2">
+                        {{-- <form action="{{ url()->current() }}" method="GET" class="flex items-center gap-2">
                             <label for="sort" class="text-[#5F1D2A] font-medium">Urutkan:</label>
                             <select name="sort" id="sort" onchange="this.form.submit()"
                                 class="border border-[#B8A5A8] rounded-lg px-3 py-2 text-[#5F1D2A] focus:outline-none focus:ring-2 focus:ring-[#5F1D2A]/50 bg-white">
@@ -88,7 +88,7 @@
                                 <option value="name_za" {{ request('sort') == 'name_za' ? 'selected' : '' }}>Nama (Z-A)
                                 </option>
                             </select>
-                        </form>
+                        </form> --}}
                     </div>
 
                     {{-- Produk Grid --}}
