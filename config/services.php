@@ -16,9 +16,8 @@ return [
 
     'komerce' => [
         'key' => env('KOMERCE_API_KEY'),
-        'url' => env('KOMERCE_BASE_URL'),
+        'base_url' => rtrim(env('KOMERCE_BASE_URL'), '/'),
     ],
-
 
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
@@ -41,9 +40,9 @@ return [
         ],
     ],
     'google' => [
-        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_id' => env('GOOGLE_CLIENT_ID'),
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
-        'redirect'      => env('GOOGLE_REDIRECT_URI'),
+        'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
 
 ];

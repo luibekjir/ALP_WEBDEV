@@ -79,4 +79,16 @@ class User extends Authenticatable
     // public function commentedGalleries(){
     //     return $this->belongsToMany(Gallery::class, 'gallery_comments');
     // }
+    
+
+public function addresses()
+{
+    return $this->hasMany(Address::class);
+}
+
+public function defaultAddress()
+{
+    return $this->hasOne(Address::class)->where('is_default', true);
+}
+
 }

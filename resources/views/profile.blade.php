@@ -49,14 +49,36 @@
                             </div>
                         </div>
 
-                        <!-- Address -->
                         <div class="md:col-span-2">
-                            <label class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat</label>
-                            <div
-                                class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80 min-h-20">
-                                {{ $user->address ?? 'Tidak diisi' }}
+                            <label class="block text-sm font-semibold text-[#5F1D2A] mb-2">
+                                Alamat Default
+                            </label>
+
+                            <div class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80">
+                                @if ($defaultAddress)
+                                    {{ $defaultAddress->address }},
+                                    {{ $defaultAddress->subdistrict }},
+                                    {{ $defaultAddress->district }},
+                                    {{ $defaultAddress->city }},
+                                    {{ $defaultAddress->zip_code }}
+                                @else
+                                    <span class="italic text-[#5F1D2A]/50">Belum ada alamat</span>
+                                @endif
                             </div>
+                            <div class="flex gap-4 mt-3">
+                                <button onclick="openAddressModal()"
+                                    class="text-sm font-semibold text-[#5F1D2A] underline hover:text-[#4a1620]">
+                                    Ganti Alamat
+                                </button>
+
+                                <button onclick="openAddAddressModal()"
+                                    class="text-sm font-semibold text-[#5F1D2A] underline hover:text-[#4a1620]">
+                                    Tambah Alamat
+                                </button>
+                            </div>
+
                         </div>
+
 
                         {{-- <!-- Member Since -->
                     <div>
@@ -389,7 +411,215 @@
         </div>
     </div>
 
+
+    <div id="addressModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
+
+                <div class="px-6 py-4 border-b flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-[#5F1D2A]">
+                        Pilih Alamat
+                    </h3>
+                    <button onclick="closeAddressModal()" class="text-xl">&times;</button>
+                </div>
+
+                <div class="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+                    @foreach ($addresses as $address)
+                        <form action="{{ route('address.set-default', $address) }}" method="POST">
+                            @csrf
+                            @method('PUT')
+
+                            <button type="submit"
+                                class="w-full text-left border rounded-lg px-4 py-3
+                            {{ $address->is_default ? 'border-[#5F1D2A] bg-[#F8D9DF]' : 'border-gray-300 hover:bg-gray-50' }}">
+                                <p class="font-semibold text-[#5F1D2A]">
+                                    {{ $address->address }}
+                                </p>
+                                <p class="text-sm text-[#5F1D2A]/70">
+                                    {{ $address->district }}, {{ $address->city }}
+                                </p>
+                            </button>
+                        </form>
+                    @endforeach
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="addAddressModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+
+            <form action="{{ route('address.store') }}" method="POST" x-data="addressForm()" x-init="fetchProvinces()"
+                class="bg-white rounded-xl shadow-xl max-w-xl w-full p-6 space-y-4">
+
+                @csrf
+
+                <h3 class="text-lg font-bold text-[#5F1D2A]">Tambah Alamat</h3>
+
+                {{-- Nama alamat --}}
+                <div>
+                    <label class="text-sm font-semibold">Nama Alamat</label>
+                    <input name="name" required placeholder="Contoh: Rumah"
+                        class="w-full border rounded-lg px-4 py-2">
+                </div>
+
+                {{-- Provinsi --}}
+                <div>
+                    <label class="text-sm font-semibold">Provinsi</label>
+                    <select name="province" x-model="selectedProvince" @change="fetchCities()" required
+                        class="w-full border rounded-lg px-4 py-2">
+
+                        <option value="">-- Pilih Provinsi --</option>
+                        @foreach ($provinces as $province)
+                            <option value="{{ $province['id'] }}|{{ $province['name'] }}">{{ $province['name'] }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Kota --}}
+                <div>
+                    <label class="text-sm font-semibold">Kota</label>
+                    <select name="city" x-model="selectedCity" @change="fetchDistricts()" :disabled="!cities.length"
+                        required class="w-full border rounded-lg px-4 py-2 disabled:bg-gray-100">
+
+                        <option value="">-- Pilih Kota --</option>
+                        <template x-for="city in cities" :key="city.id">
+                            <option :value="city.id + '|' + city.name" x-text="city.name"></option>
+                        </template>
+                    </select>
+                </div>
+
+                {{-- Kecamatan --}}
+                <div>
+                    <label class="text-sm font-semibold">Kecamatan</label>
+                    <select name="district" x-model="selectedDistrict" @change="fetchSubDistricts()"
+                        :disabled="!districts.length === 0" required
+                        class="w-full border rounded-lg px-4 py-2 disabled:bg-gray-100">
+
+                        <option value="">Pilih Kecamatan</option>
+                        <template x-for="district in districts" :key="district.id">
+                            <option :value="district.id + '|' + district.name" x-text="district.name"></option>
+                        </template>
+                    </select>
+                </div>
+
+                {{-- Kelurahan --}}
+                <div>
+                    <label class="text-sm font-semibold">Kelurahan</label>
+                    <select name="subdistrict" x-model="selectedSubDistrict" :disabled="!subDistricts.length === 0"
+                        required class="w-full border rounded-lg px-4 py-2 disabled:bg-gray-100">
+                        <option value="">Pilih Kelurahan</option>
+                        <template x-for="sub in subDistricts" :key="sub.id">
+                            <option :value="sub.id + '|' + sub.name" x-text="sub.name"></option>
+                        </template>
+                    </select>
+                </div>
+
+                {{-- Kode pos --}}
+                <div>
+                    <label class="text-sm font-semibold">Kode Pos</label>
+                    <input name="postal_code" required class="w-full border rounded-lg px-4 py-2"
+                        placeholder="Masukkan kode pos">
+                </div>
+
+                {{-- Jalan --}}
+                <div>
+                    <label class="text-sm font-semibold">Jalan</label>
+                    <input name="extra_detail" required class="w-full border rounded-lg px-4 py-2"
+                        placeholder="Jl. Merdeka No. 10">
+                </div>
+
+                <div class="flex gap-3 pt-4">
+                    <button type="button" onclick="closeAddAddressModal()" class="flex-1 border rounded-lg py-2">
+                        Batal
+                    </button>
+                    <button type="submit" class="flex-1 bg-[#5F1D2A] text-white rounded-lg py-2">
+                        Simpan
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+
+
+
     <script>
+        function addressForm() {
+            return {
+                selectedProvince: '',
+                selectedCity: '',
+                selectedDistrict: '',
+                selectedSubDistrict: '',
+                cities: [],
+                districts: [],
+                subDistricts: [],
+                async fetchProvinces() {
+                    const response = await fetch('/komerce/provinces');
+                    this.provinces = await response.json();
+                },
+                async fetchCities() {
+                    this.cities = [];
+                    this.districts = [];
+                    this.subDistricts = [];
+
+                    if (!this.selectedProvince) return;
+
+                    const provinceId = this.selectedProvince.split('|')[0];
+
+                    const res = await fetch(`/komerce/cities/${provinceId}`);
+
+                    if (!res.ok) {
+                        console.error('Fetch cities failed');
+                        return;
+                    }
+
+                    const json = await res.json();
+                    this.cities = Array.isArray(json) ? json : [];
+                },
+                async fetchDistricts() {
+                    this.districts = [];
+                    this.subDistricts = [];
+
+                    this.selectedDistrict = '';
+                    this.selectedSubDistrict = '';
+
+                    if (!this.selectedCity) return;
+
+                    const cityId = this.selectedCity.split('|')[0];
+
+                    const res = await fetch(`/komerce/districts/${cityId}`);
+                    this.districts = await res.json();
+                },
+                async fetchSubDistricts() {
+                    this.subDistricts = [];
+                    this.selectedSubDistrict = '';
+
+                    if (!this.selectedDistrict) return;
+
+                    const districtId = this.selectedDistrict.split('|')[0];
+
+                    const res = await fetch(`/komerce/subdistricts/${districtId}`);
+                    this.subDistricts = await res.json();
+                }
+            }
+        }
+
+        function openAddAddressModal() {
+            document.getElementById('addAddressModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAddAddressModal() {
+            document.getElementById('addAddressModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
         // Modal functions
         function openEditModal() {
             document.getElementById('editModal').classList.remove('hidden');
