@@ -25,6 +25,7 @@ class Product extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'stock' => 'integer',
+        'rating' => 'decimal:1',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

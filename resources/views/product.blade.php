@@ -41,7 +41,8 @@
                     </div>
                     <script>
                         setTimeout(() => {
-                            document.querySelector('[role="alert"]').remove();
+                            const alert = document.querySelector('[role="alert"]');
+                            if (alert) alert.remove();
                         }, 3000);
                     </script>
                 @endif
@@ -247,30 +248,29 @@
 
                 <div class="mb-3">
                     <label class="block text-sm font-medium">Nama</label>
-                    <input type="text" name="name" id="edit-name" class="w-full border rounded px-3 py-2"
-                        required>
+                    <input type="text" name="name" id="edit-name" class="w-full border rounded px-3 py-2" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="block text-sm font-medium">Harga</label>
-                    <input type="number" name="price" id="edit-price" class="w-full border rounded px-3 py-2"
-                        required>
+                    <input type="number" name="price" id="edit-price" class="w-full border rounded px-3 py-2" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="block text-sm font-medium">Stok</label>
-                    <input type="number" name="stock" id="edit-stock" class="w-full border rounded px-3 py-2"
-                        required>
+                    <input type="number" name="stock" id="edit-stock" class="w-full border rounded px-3 py-2" required>
                 </div>
 
                 <div class="mb-3">
                     <label class="block text-sm font-medium">Berat (gram)</label>
-                    <input type="number" name="weight" id="edit-weight" class="w-full border rounded px-3 py-2" min="0">
+                    <input type="number" name="weight" id="edit-weight" class="w-full border rounded px-3 py-2"
+                        min="0">
                 </div>
 
                 <div class="mb-3">
                     <label class="block text-sm font-medium">Rating</label>
-                    <input type="number" name="rating" id="edit-rating" class="w-full border rounded px-3 py-2" min="0" max="5" step="0.1">
+                    <input type="number" name="rating" id="edit-rating" class="w-full border rounded px-3 py-2"
+                        min="0" max="5" step="0.1">
                 </div>
 
                 <div class="mb-3">
@@ -303,6 +303,16 @@
             </button>
 
             <h2 class="text-2xl font-bold text-[#5F1D2A] mb-4">Tambah Produk Baru</h2>
+
+            @if ($errors->any())
+                <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+                    <ul class="list-disc list-inside text-sm">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <form action="{{ route('product.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
@@ -346,7 +356,8 @@
 
                 <div class="mb-4">
                     <label for="rating" class="block text-sm font-medium text-[#5F1D2A]">Rating</label>
-                    <input type="number" name="rating" id="rating" value="0" min="0" max="5" step="0.1"
+                    <input type="number" name="rating" id="rating" value="0" min="0" max="5"
+                        step="0.1"
                         class="mt-1 block w-full border border-[#B8A5A8] rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#5F1D2A]/50">
                 </div>
 

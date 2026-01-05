@@ -26,13 +26,14 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'image' => 'nullable|image|max:2048',
+            'image' => 'required|image|max:100000',
             'name' => 'required|string|max:255',
             'category_id' => 'required|exists:categories,id',
-            'price' => 'required|numeric',
+            'price' => 'required|numeric|min:0',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
-            'stock' => 'required|numeric',
+            'stock' => 'required|integer|min:0',
+            'weight' => 'nullable|numeric|min:0',
+            'rating' => 'nullable|numeric|min:0|max:5',
         ]);
 
         $product = new Product();
@@ -41,6 +42,8 @@ class ProductController extends Controller
         $product->price = $request->price;
         $product->stock = $request->stock;
         $product->description = $request->description;
+        $product->weight = $request->weight;
+        $product->rating = $request->rating;
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('products', 'public');
@@ -66,7 +69,7 @@ class ProductController extends Controller
             'stock' => 'required|integer|min:0',
             'description' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
-            'image' => 'nullable|image|max:2048',
+            'image' => 'nullable|image|max:100000',
             'weight' => 'nullable|numeric|min:0',
             'rating' => 'nullable|numeric|min:0|max:5',
         ]);

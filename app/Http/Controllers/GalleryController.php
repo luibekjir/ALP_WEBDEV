@@ -21,12 +21,12 @@ class GalleryController extends Controller
         $request->validate([
             'title'       => 'required|string|max:255',
             'description' => 'nullable|string',
-            'image'       => 'nullable|image|max:2048',
+            'image'       => 'required|image|max:2048',
         ]);
 
         $gallery = new Gallery();
         $gallery->title = $request->title;
-        $gallery->description = $request->description;
+        $gallery->description = $request->description ?? '';
 
         if ($request->hasFile('image')) {
             $path = $request->file('image')->store('gallery', 'public');
@@ -57,6 +57,11 @@ class GalleryController extends Controller
             'description' => 'nullable|string',
             'image'       => 'nullable|image|max:2048',
         ]);
+
+        // Pastikan description tidak null karena kolom di DB tidak nullable
+        if (! array_key_exists('description', $validated) || $validated['description'] === null) {
+            $validated['description'] = '';
+        }
 
         // 🔴 HAPUS FOTO LAMA JIKA ADA
         if ($request->hasFile('image')) {
