@@ -15,6 +15,7 @@
             <p><strong>Penerima:</strong> {{ $order->receiver_name }}</p>
             <p><strong>No. Telepon:</strong> {{ $order->phone }}</p>
             <p><strong>Alamat:</strong> {{ $order->address }}</p>
+            <p><strong>Kurir:</strong> {{ $order->courier }}</p>
             <p class="text-lg font-semibold text-right mt-4">
                 Total: Rp {{ number_format($order->total_price, 0, ',', '.') }}
             </p>
@@ -69,6 +70,10 @@
                 onError: function(result) {
                     cancelOrder();
                 },
+
+                onClose: function() {
+                    cancelOrder();
+                }
             });
         };
 

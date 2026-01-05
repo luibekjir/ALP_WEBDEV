@@ -137,7 +137,7 @@
                                         <span class="text-sm text-[#5F1D2A]/80 mb-3">
                                             Stok: {{ $product->stock }}<br>
                                             Berat: {{ $product->weight ?? '-' }} gram<br>
-                                            Rating: {{ $product->rating ?? '-' }}/5
+                                            {{-- Rating: {{ $product->rating ?? '-' }}/5 --}}
                                         </span>
 
                                         {{-- FOOTER --}}
@@ -173,7 +173,7 @@
                                                     @endif
 
                                                     {{-- BUY NOW --}}
-                                                    @if ($product->stock > 0)
+                                                    {{-- @if ($product->stock > 0)
                                                         <form action="{{ route('checkout.buy-now', $product) }}" method="GET"
                                                             class="flex-1">
                                                             <button type="submit"
@@ -181,7 +181,7 @@
                                                                 Beli
                                                             </button>
                                                         </form>
-                                                    @endif
+                                                    @endif --}}
 
                                                 </div>
                                             @else

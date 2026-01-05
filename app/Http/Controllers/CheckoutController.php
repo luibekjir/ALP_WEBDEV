@@ -49,12 +49,21 @@ class CheckoutController extends Controller
             $provinces = [];
         }
 
-        // ===== CHECKOUT DARI CART =====
-        $carts = Cart::where('user_id', $user->id)
-            ->with('product')
-            ->get();
+        // ===== CHECKOUT DARI CART (HANYA YANG DIPILIH) =====
+        $cartIds = session('checkout_cart_ids');
 
-        if ($carts->count() > 0) {
+        if (is_array($cartIds) && count($cartIds) > 0) {
+            $carts = Cart::where('user_id', $user->id)
+                ->whereIn('id', $cartIds)
+                ->with('product')
+                ->get();
+
+            // Jika tidak ada cart yang cocok (misalnya sudah dihapus), kembalikan ke cart
+            if ($carts->isEmpty()) {
+                return redirect()->route('cart.index')
+                    ->with('error', 'Produk yang dipilih tidak ditemukan di keranjang.');
+            }
+
             return view('product-checkout', compact(
                 'carts',
                 'addresses',
@@ -110,7 +119,7 @@ class CheckoutController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Gagal menghitung ongkir dari server pengiriman.',
+                'message' => 'Ekspedisi tidak tersedia untuk tujuan tersebut.',
             ], 200);
         } catch (\Throwable $e) {
             \Log::error('RajaOngkir checkOngkir exception', [
@@ -139,9 +148,11 @@ class CheckoutController extends Controller
             'courier' => 'required|string',
         ]);
 
+        
+
         // Simpan order atau proses checkout di sini
         // Contoh: redirect ke halaman pembayaran dengan pesan sukses
-        return redirect()->route('checkout.index')->with('success', 'Checkout berhasil dikonfirmasi.');
+        return redirect()->route('show-payment')->with('success', 'Checkout berhasil dikonfirmasi.');
     }
 
     /**

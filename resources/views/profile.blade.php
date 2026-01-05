@@ -411,16 +411,16 @@
                             </div>
 
                             <!-- Address -->
-                            <div>
+                            {{-- <div>
                                 <label for="address" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat
                                     Lengkap</label>
-                                <textarea id="address" name="address" rows="4"
+                                {{-- <textarea id="address" name="address" rows="4"
                                     class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent resize-none"
                                     placeholder="Masukkan alamat lengkap Anda">{{ old('address', $user->address) }}</textarea>
                                 @error('address')
                                     <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                                @enderror
-                            </div>
+                                @enderror --}}
+                            {{-- </div> --}}
 
                             <!-- Modal Footer -->
                             <div class="flex gap-3 pt-4 border-t border-[#B8A5A8]/20">
@@ -622,7 +622,6 @@
             <script>
                 function addressForm() {
                     return {
-                        showAddAddressModal: false,
                         selectedProvince: '',
                         selectedCity: '',
                         selectedDistrict: '',

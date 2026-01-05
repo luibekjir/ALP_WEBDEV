@@ -8,9 +8,20 @@
         </div>
         <script>
             setTimeout(() => {
-                document.querySelector('[role="alert"]').remove();
+                const alert = document.querySelector('[role="alert"]');
+                if (alert) alert.remove();
             }, 3000);
         </script>
+    @endif
+
+    @if ($errors->any())
+        <div class="max-w-3xl mx-auto px-6 mt-4">
+            <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm space-y-1">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+            </div>
+        </div>
     @endif
 
     <div class="w-full bg-[#FFF8F6] min-h-screen py-16">
@@ -73,10 +84,9 @@
             {{-- ===================== --}}
             {{-- FORM CHECKOUT --}}
             {{-- ===================== --}}
-            <form action="{{ route('checkout.confirm') }}" method="POST"
+            <form action="{{ route('orders.store') }}" method="POST"
                 class="bg-white rounded-xl shadow-md p-6 space-y-4">
                 @csrf
-                @method('PATCH')
 
                 {{-- Jika dari cart --}}
                 @if (isset($carts))
@@ -112,7 +122,30 @@
 
                 <div>
                     <label class="block font-semibold text-[#5F1D2A] mb-1">Alamat</label>
-                    <textarea name="address" rows="3" class="w-full border rounded-lg px-4 py-2" style="display:none">{{ old('address', $defaultAddress?->address ?? Auth::user()->address) }}</textarea>
+                    {{-- Gabungan alamat lengkap untuk dikirim ke controller --}}
+                    @php
+                        $fullAddress = null;
+                        if ($defaultAddress) {
+                            $parts = [];
+                            if ($defaultAddress->extra_detail) {
+                                $parts[] = $defaultAddress->extra_detail;
+                            }
+                            if ($defaultAddress->subdistrict_name || $defaultAddress->district_name) {
+                                $parts[] = trim('Kel. ' . ($defaultAddress->subdistrict_name ?? '') . ', Kec. ' . ($defaultAddress->district_name ?? ''));
+                            }
+                            if ($defaultAddress->city_name || $defaultAddress->province_name) {
+                                $parts[] = trim(($defaultAddress->city_name ?? '') . ', ' . ($defaultAddress->province_name ?? ''));
+                            }
+                            if ($defaultAddress->postal_code) {
+                                $parts[] = 'Kode Pos ' . $defaultAddress->postal_code;
+                            }
+                            $fullAddress = implode(', ', array_filter($parts));
+                        } else {
+                            $fullAddress = Auth::user()->address ?? null;
+                        }
+                    @endphp
+                    <input type="hidden" id="address" name="address"
+                        value="{{ old('address', $fullAddress) }}">
                     <div id="selected-address-summary"
                         class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80 space-y-1">
                         @if ($defaultAddress)
@@ -286,9 +319,18 @@
 
                 <!-- Hasil Perhitungan Ongkos Kirim -->
                 <div class="mt-8 p-6 bg-indigo-50 border border-indigo-200 rounded-lg results-container hidden">
-                    <h2 class="text-xl font-semibold text-indigo-800 mb-4 text-center">Hasil Perhitungan Ongkos Kirim</h2>
-                    <div class="space-y-3" id="results-ongkir">
-                    </div>
+                    <h2 class="text-xl font-semibold text-indigo-800 mb-2 text-center">Hasil Perhitungan Ongkos Kirim</h2>
+                    <p class="text-xs text-indigo-700 mb-3 text-center" id="shipping-hint">
+                        Pilih salah satu layanan pengiriman di bawah untuk melanjutkan pembayaran.
+                    </p>
+
+                    <!-- List opsi ongkir yang bisa dipilih -->
+                    <div id="results-ongkir" class="space-y-3"></div>
+
+                    <!-- Hidden field untuk dikirim ke controller -->
+                    <input type="hidden" name="shipping_service" id="shipping_service">
+                    <input type="hidden" name="shipping_cost" id="shipping_cost">
+                    <input type="hidden" name="shipping_etd" id="shipping_etd">
                 </div>
 
 
@@ -360,16 +402,34 @@ let weight      = $('#weight').val();
                                 $('.results-container').addClass('hidden').removeClass('block');
                             },
                             success: function(response) {
+                                // kosongkan hasil lama & reset pilihan
                                 $('#results-ongkir').empty();
+                                $('#shipping_service').val('');
+                                $('#shipping_cost').val('');
+                                $('#shipping_etd').val('');
 
-                                if (response && response.success && Array.isArray(response.data)) {
+                                if (response && response.success && Array.isArray(response.data) && response.data.length) {
                                     $('.results-container').removeClass('hidden').addClass('block');
+
                                     $.each(response.data, function(index, value) {
+                                        const optionId = `shipping_option_${index}`;
                                         $('#results-ongkir').append(`
-                                            <div class="flex justify-between items-center p-3 bg-white rounded-xl shadow border border-gray-200">
-                                                <span class="text-lg font-medium text-gray-800">${value.service} - ${value.description} - (${value.etd})</span>
-                                                <span class="text-lg font-bold text-indigo-700">${formatCurrency(value.cost)}</span>
-                                            </div>
+                                            <label for="${optionId}" class="flex justify-between items-center p-3 bg-white rounded-xl shadow border border-gray-200 cursor-pointer hover:border-indigo-400 transition">
+                                                <div class="flex items-center gap-3">
+                                                    <input type="radio"
+                                                           id="${optionId}"
+                                                           name="shipping_option"
+                                                           class="shipping-option h-4 w-4 text-indigo-600 border-gray-300"
+                                                           data-service="${value.service} - ${value.description}"
+                                                           data-etd="${value.etd}"
+                                                           data-cost="${value.cost}">
+                                                    <div>
+                                                        <div class="text-sm font-semibold text-gray-800">${value.service} - ${value.description}</div>
+                                                        <div class="text-xs text-gray-500">Estimasi: ${value.etd}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="text-base font-bold text-indigo-700">${formatCurrency(value.cost)}</div>
+                                            </label>
                                         `);
                                     });
                                 } else {
@@ -396,6 +456,14 @@ let weight      = $('#weight').val();
                                 isProcessing = false;
                             }
                         });
+                    });
+
+                    // Event: pilih salah satu opsi ongkir
+                    $(document).on('change', '.shipping-option', function() {
+                        const el = $(this);
+                        $('#shipping_service').val(el.data('service'));
+                        $('#shipping_cost').val(el.data('cost'));
+                        $('#shipping_etd').val(el.data('etd'));
                     });
 
                     function openAddressModal() {

@@ -188,17 +188,17 @@ class UserController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|email',
             'phone' => 'nullable|string',
-            'password' => 'required|confirmed|min:6',
+            'password' => 'nullable|confirmed|min:6',
 
             // ADDRESS WAJIB
-            'address' => 'required|string',
-            'subdistrict' => 'required|string',
-            'district' => 'required|string',
-            'city' => 'required|string',
-            'zip_code' => 'required|string',
+            'address' => 'nullable|string',
+            'subdistrict' => 'nullable|string',
+            'district' => 'nullable|string',
+            'city' => 'nullable|string',
+            'zip_code' => 'nullable|string',
         ]);
 
         $user->update($validated);

@@ -86,7 +86,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/gallery/{comment}/delete-comment', [GalleryController::class, 'deleteComment'])->name('gallery.delete-comment');
 
     // Route::get('/orders/create/{product}', [OrderController::class, 'create'])->name('orders.create');
-    // Route::post('/orders/{product}', [OrderController::class, 'store'])->name('orders.store');
+    Route::post('/orders/checkout/store', [OrderController::class, 'store'])->name('orders.store');
 
     // Route::get('/google/connect', [GoogleCalendarController::class, 'redirect'])
     //     ->name('google.redirect');

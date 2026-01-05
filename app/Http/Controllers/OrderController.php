@@ -116,7 +116,9 @@ class OrderController extends Controller
         $validated = $request->validate([
             'receiver_name' => 'required|string|max:255',
             'phone'         => 'required|string|max:20',
-            'address'       => 'required|string',
+            'address'       => 'nullable|string',
+            'courier'       => 'required|string',
+            'shipping_cost' => 'required|integer|min:0',
         ]);
 
         // 2️⃣ AMBIL CART ID DARI SESSION
@@ -146,6 +148,7 @@ class OrderController extends Controller
             foreach ($carts as $cart) {
                 $totalPrice += $cart->product->price * $cart->quantity;
             }
+            $totalPrice += $validated['shipping_cost'];
 
             // 5️⃣ BUAT ORDER
             $order = Order::create([
@@ -153,6 +156,8 @@ class OrderController extends Controller
                 'receiver_name' => $validated['receiver_name'],
                 'phone'         => $validated['phone'],
                 'address'       => $validated['address'],
+                'courier'       => $validated['courier'],
+                'shipping_cost' => $validated['shipping_cost'],
                 'total_price'   => $totalPrice,
                 'status'        => 'pending',
             ]);
@@ -160,10 +165,9 @@ class OrderController extends Controller
             // 6️⃣ BUAT ORDER ITEMS
             foreach ($carts as $cart) {
                 $order->items()->create([
-                    'product' => $cart->product->name,
+                    'product_id' => $cart->product_id,
                     'price'      => $cart->product->price,
                     'quantity'   => $cart->quantity,
-                    'subtotal'   => $cart->product->price * $cart->quantity,
                 ]);
 
                 // OPTIONAL: hapus cart setelah masuk order
@@ -178,7 +182,7 @@ class OrderController extends Controller
 
             $params = [
                 'transaction_details' => [
-                    'order_id'     => $order->id,
+                    'order_id'     => 'ORDER-' . $order->id . '-' . time(),
                     'gross_amount' => (int) $totalPrice,
                 ],
                 'customer_details' => [
