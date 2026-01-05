@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Address;
+use App\Models\Order;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Password;
-use App\Models\Order;
 
 class UserController extends Controller
 {
@@ -18,14 +20,17 @@ class UserController extends Controller
     {
         return view('login');
     }
+
     public function register()
     {
         return view('register');
     }
+
     public function forgotPassword()
     {
         return view('forgot-password');
     }
+
     public function profile()
     {
         $user = Auth::user();
@@ -39,41 +44,94 @@ class UserController extends Controller
             ->orderByPivot('registered_at', 'desc')
             ->get();
 
-        return view('profile', compact('user', 'orders', 'events'));
+        $defaultAddress = $user->defaultAddress;
+        $addresses = $user->addresses;
+
+        // Fetch provinces from Komerce API
+        $provinces = [];
+        try {
+            $response = Http::withHeaders([
+                'key' => config('services.komerce.key'),
+            ])->get(
+                rtrim(config('services.komerce.base_url'), '/').'/api/v1/destination/province'
+            );
+
+            $provinces = $response->successful()
+                ? $response->json('data')
+                : [];
+
+        } catch (\Exception $e) {
+            $provinces = [];
+        }
+
+        return view('profile', compact(
+            'user',
+            'orders',
+            'events',
+            'addresses',
+            'defaultAddress',
+            'provinces'
+        ));
     }
+
     /**
      * Show the form for creating a new resource.
      */
     public function create(Request $request)
     {
         $validated = $request->validate([
-            'name'      => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'password'  => 'required|min:6|confirmed',
-            'phone'     => 'required|string|max:20',
-            'address'   => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'nullable|string|max:20',
+            'password' => 'required|min:6|confirmed',
+
+            'address' => 'required|string',
+            'subdistrict' => 'required|string',
+            'district' => 'required|string',
+            'city' => 'required|string',
+            'zip_code' => 'required|string',
         ]);
 
-        User::create([
+        // Split id|name untuk city, district, subdistrict
+        [$cityId, $cityName] = explode('|', $validated['city']);
+        [$districtId, $districtName] = explode('|', $validated['district']);
+        [$subdistrictId, $subdistrictName] = explode('|', $validated['subdistrict']);
+
+        $user = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
-            'phone' => $validated['phone'],
-            'address' => $validated['address'],
+            'phone' => $validated['phone'] ?? null,
+            'password' => Hash::make($validated['password']),
             'role' => 'user',
+        ]);
+
+        // 2️⃣ Buat address pertama (DEFAULT)
+        Address::create([
+            'user_id' => $user->id,
+            'address' => $validated['address'],
+            'city_id' => $cityId,
+            'city_name' => $cityName,
+            'district_id' => $districtId,
+            'district_name' => $districtName,
+            'subdistrict_id' => $subdistrictId,
+            'subdistrict_name' => $subdistrictName,
+            'zip_code' => $validated['zip_code'],
+            'is_default' => true,
         ]);
 
         return redirect('/login')->with('success', 'User created successfully!');
     }
+
     public function authLogin(Request $request)
     {
         $credentials = $request->validate([
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required',
         ]);
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
+
             return redirect()->intended('');
         }
 
@@ -98,6 +156,7 @@ class UserController extends Controller
 
         return back()->withErrors(['email' => __($status)]);
     }
+
     public function showResetForm(Request $request, $token)
     {
         return view('reset-password', [
@@ -144,7 +203,6 @@ class UserController extends Controller
     // return view('profile', compact('user', 'orders'));
     // }
 
-
     public function updateProfile(Request $request, User $user)
     {
         if (Auth::id() !== $user->id) {
@@ -153,9 +211,16 @@ class UserController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:1000',
+            'email' => 'required|email|unique:users',
+            'phone' => 'nullable|string',
+            'password' => 'required|confirmed|min:6',
+
+            // ADDRESS WAJIB
+            'address' => 'required|string',
+            'subdistrict' => 'required|string',
+            'district' => 'required|string',
+            'city' => 'required|string',
+            'zip_code' => 'required|string',
         ]);
 
         $user->update($validated);
@@ -166,6 +231,7 @@ class UserController extends Controller
     public function changePasswordForm()
     {
         $user = Auth::user();
+
         return view('change-password', compact('user'));
     }
 
@@ -180,7 +246,7 @@ class UserController extends Controller
             'password' => 'required|min:6|confirmed',
         ]);
 
-        if (!Hash::check($request->current_password, $user->password)) {
+        if (! Hash::check($request->current_password, $user->password)) {
             return redirect()->back()->with(['message' => 'Password saat ini tidak sesuai!']);
         }
 
@@ -201,6 +267,7 @@ class UserController extends Controller
 
         return redirect('');
     }
+
     public function destroy()
     {
         $user = Auth::user();

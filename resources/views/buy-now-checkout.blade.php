@@ -62,24 +62,55 @@
             {{-- quantity disinkronkan via JS --}}
             <input type="hidden" name="quantity" id="quantity-hidden" value="1">
 
+
+            <div class="flex justify-between items-center mb-2">
+                <label class="block font-semibold mb-1">Alamat Pengiriman</label>
+                <button type="button" onclick="openAddressModal()" class="text-sm font-semibold text-[#5F1D2A] underline">Ganti Alamat</button>
+            </div>
+
             <div>
                 <label class="block font-semibold mb-1">Nama Penerima</label>
                 <input type="text" name="receiver_name"
                        class="w-full border rounded-lg px-4 py-2"
-                       value="{{ auth()->user()->name }}">
+                       value="{{ old('receiver_name', $defaultAddress?->receiver_name ?? auth()->user()->name) }}">
             </div>
 
             <div>
                 <label class="block font-semibold mb-1">No. Telepon</label>
                 <input type="text" name="phone"
                        class="w-full border rounded-lg px-4 py-2"
-                       value="{{ auth()->user()->phone }}">
+                       value="{{ old('phone', $defaultAddress?->phone ?? auth()->user()->phone) }}">
             </div>
 
             <div>
                 <label class="block font-semibold mb-1">Alamat</label>
                 <textarea name="address" rows="3"
-                          class="w-full border rounded-lg px-4 py-2">{{ auth()->user()->address }}</textarea>
+                          class="w-full border rounded-lg px-4 py-2">{{ old('address', $defaultAddress?->address ?? auth()->user()->address) }}</textarea>
+            </div>
+
+            <input type="hidden" name="subdistrict" value="{{ old('subdistrict', $defaultAddress?->subdistrict) }}">
+            <input type="hidden" name="district" value="{{ old('district', $defaultAddress?->district) }}">
+            <input type="hidden" name="city" value="{{ old('city', $defaultAddress?->city) }}">
+            <input type="hidden" name="zip_code" value="{{ old('zip_code', $defaultAddress?->zip_code) }}">
+
+            <!-- Modal Pilih Alamat -->
+            <div id="addressModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50">
+                <div class="flex items-center justify-center min-h-screen p-4">
+                    <div class="bg-white rounded-xl shadow-xl max-w-md w-full">
+                        <div class="px-6 py-4 border-b flex justify-between items-center">
+                            <h3 class="text-lg font-bold text-[#5F1D2A]">Pilih Alamat</h3>
+                            <button type="button" onclick="closeAddressModal()" class="text-xl">&times;</button>
+                        </div>
+                        <div class="p-6 space-y-3 max-h-[60vh] overflow-y-auto">
+                            @foreach ($addresses as $address)
+                                <button type="button" class="w-full text-left border rounded-lg px-4 py-3 mb-2 {{ $address->is_default ? 'border-[#5F1D2A] bg-[#F8D9DF]' : 'border-gray-300 hover:bg-gray-50' }}" onclick="selectAddress(@json($address))">
+                                    <p class="font-semibold text-[#5F1D2A]">{{ $address->address }}</p>
+                                    <p class="text-sm text-[#5F1D2A]/70">{{ $address->district }}, {{ $address->city }}</p>
+                                </button>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <button type="submit"
@@ -94,6 +125,28 @@
 {{-- ===================== --}}
 {{-- JS HITUNG SUBTOTAL --}}
 {{-- ===================== --}}
+document.addEventListener('DOMContentLoaded', () => {
+    const qtyInput = document.getElementById('quantity');
+    const qtyHidden = document.getElementById('quantity-hidden');
+    const priceEl = document.getElementById('price');
+    const subtotalEl = document.getElementById('subtotal');
+
+    const price = parseInt(priceEl.dataset.price);
+
+    function updateSubtotal() {
+        let qty = parseInt(qtyInput.value);
+        if (qty < 1) qty = 1;
+
+        qtyInput.value = qty;
+        qtyHidden.value = qty;
+
+        const total = price * qty;
+        subtotalEl.textContent = 'Rp ' + total.toLocaleString('id-ID');
+    }
+
+    qtyInput.addEventListener('input', updateSubtotal);
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const qtyInput = document.getElementById('quantity');
@@ -116,5 +169,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     qtyInput.addEventListener('input', updateSubtotal);
 });
+
+function openAddressModal() {
+    document.getElementById('addressModal').classList.remove('hidden');
+}
+function closeAddressModal() {
+    document.getElementById('addressModal').classList.add('hidden');
+}
+function selectAddress(address) {
+    document.querySelector('input[name="receiver_name"]').value = address.receiver_name ?? '';
+    document.querySelector('input[name="phone"]').value = address.phone ?? '';
+    document.querySelector('textarea[name="address"]').value = address.address ?? '';
+    document.querySelector('input[name="subdistrict"]').value = address.subdistrict ?? '';
+    document.querySelector('input[name="district"]').value = address.district ?? '';
+    document.querySelector('input[name="city"]').value = address.city ?? '';
+    document.querySelector('input[name="zip_code"]').value = address.zip_code ?? '';
+    closeAddressModal();
+}
 </script>
 @endsection

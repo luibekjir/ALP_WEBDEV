@@ -96,6 +96,9 @@ class ProductController extends Controller
 
     public function buyNow(Product $product)
     {
-        return view('buy-now-checkout', compact('product'));
+        $user = Auth::user();
+        $defaultAddress = $user->defaultAddress;
+        $addresses = $user->addresses;
+        return view('buy-now-checkout', compact('product', 'defaultAddress', 'addresses'));
     }
 }

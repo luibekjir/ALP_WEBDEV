@@ -1,19 +1,19 @@
 <?php
 
 use App\Http\Controllers\AdminOrderController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\HomeController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\GalleryController;
-use App\Http\Controllers\EventController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\GoogleCalendarController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\UserController;
 use App\Models\Order;
 use App\Models\Product;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'about']);
 Route::get('/aboutus', [HomeController::class, 'about']);
@@ -24,7 +24,6 @@ Route::post('/gallery/store', [GalleryController::class, 'store'])->name('galler
 
 Route::get('/product', [ProductController::class, 'index'])->name('product');
 Route::post('/product', [ProductController::class, 'store'])->name('product.store')->middleware('admin');
-
 
 Route::get('/event', [EventController::class, 'index']);
 Route::post('/event', [EventController::class, 'store'])->name('event.store')->middleware('admin');
@@ -71,6 +70,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/profile/{user}/update-password', [UserController::class, 'updatePassword'])->name('profile.password-update');
     Route::delete('/profile/delete-account', [UserController::class, 'destroy'])->name('profile.destroy');
 
+    Route::patch('/address/{address}/set-default',
+        [AddressController::class, 'setDefault']
+    )->name('address.set-default');
+
+    Route::post('/addresses', [AddressController::class, 'store'])
+        ->name('address.store');
 
     Route::post('/logout', [UserController::class, 'logout'])->name('logout');
 
@@ -88,7 +93,7 @@ Route::middleware('auth')->group(function () {
     //     ->name('google.callback');
 
     Route::post('/event/{event}/register', [EventController::class, 'addToCalendar'])
-    ->name('event.register');
+        ->name('event.register');
 });
 
 Route::middleware('auth')->group(function () {
@@ -109,9 +114,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/cart/{cart}', [CartController::class, 'destroy'])
         ->name('cart.destroy');
 
-    Route::post('/checkout/prepare', [OrderController::class, 'prepare'])
+    Route::post('/checkout/prepare', [CheckoutController::class, 'prepare'])
         ->name('checkout.prepare');
-    Route::get('/checkout', [OrderController::class, 'index'])
+
+    Route::get('/checkout', [CheckoutController::class, 'index'])
         ->name('checkout.index');
 
     // BUY NOW
@@ -121,11 +127,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout/buy-now/create-order/{product}', [OrderController::class, 'create'])
         ->name('create.order.buy-now');
 
-
     // FINAL SUBMIT
     Route::post('/checkout/confirm', [OrderController::class, 'store'])
         ->name('checkout.confirm');
-
 
     Route::get('/show-payment/{order}', function (Order $order) {
         return view('show-payment', compact('order'));
@@ -145,8 +149,16 @@ Route::middleware('auth')->group(function () {
 Route::get('/test-email', function () {
     Mail::raw('EMAIL TEST DARI LARAVEL', function ($message) {
         $message->to('lnathaniel@student.ciputra.ac.id')
-                ->subject('Test Email Laravel');
+            ->subject('Test Email Laravel');
     });
 
     return 'EMAIL TERKIRIM (cek inbox / spam)';
+});
+
+Route::middleware('auth')->group(function () {
+    Route::get('/komerce/provinces', [KomerceController::class, 'provinces']);
+    Route::get('/komerce/cities/{provinceId}', [KomerceController::class, 'cities']);
+    Route::get('/komerce/districts/{cityId}', [KomerceController::class, 'districts']);
+    Route::get('/komerce/subdistricts/{districtId}', [KomerceController::class, 'subdistricts']);
+
 });
