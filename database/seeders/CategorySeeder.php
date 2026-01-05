@@ -13,6 +13,25 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-       Category::factory()->count(10)->create();
+       Category::create([
+           'name' => 'Batik A',
+           'description' => 'Devices and gadgets including phones, laptops, and accessories.',
+       ]);
+       Category::create([
+           'name' => 'Batik B',
+           'description' => 'Devices and gadgets including phones, laptops, and accessories.',
+       ]);
+       Category::create([
+           'name' => 'Batik C',
+           'description' => 'Devices and gadgets including phones, laptops, and accessories.',
+       ]);
+       Category::create([
+           'name' => 'Batik D',
+           'description' => 'Devices and gadgets including phones, laptops, and accessories.',
+       ]);
+       Category::create([
+           'name' => 'Batik E',
+           'description' => 'Devices and gadgets including phones, laptops, and accessories.',
+       ]);
     }
 }
