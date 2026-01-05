@@ -1,6 +1,9 @@
 @extends('section.layout')
 
 @section('content')
+    <br>
+    <br>
+    <br>
     <div class="max-w-2xl mx-auto mt-10 bg-white shadow-lg rounded-xl p-6">
 
         <h1 class="text-2xl font-bold text-[#5F1D2A] mb-4">

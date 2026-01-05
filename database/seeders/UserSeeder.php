@@ -16,7 +16,7 @@ class UserSeeder extends Seeder
     {
         User::create([
             'name' => 'Admin',
-            'email' => 'admin@gmail.com',
+            'email' => 'lnathaniel@student.ciputra.ac.id',
             'password' => bcrypt('password'),
             'remember_token' => Str::random(10),
             'role' => 'admin',
