@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\NewOrderMail;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -72,7 +74,7 @@ class OrderController extends Controller
 
             // Simpan order item
             $order->items()->create([
-                'product_id' => $product->id,
+                'product' => $product->name,
                 'price'      => $product->price,
                 'quantity'   => $validated['quantity'],
                 'subtotal'   => $subtotal,
@@ -86,7 +88,7 @@ class OrderController extends Controller
 
             $params = [
                 'transaction_details' => [
-                    'order_id'     => $order->id,
+                    'order_id'     => 'ORDER-' . $order->id . '-' . time(),
                     'gross_amount' => (int) round($totalPrice), // WAJIB integer
                 ],
                 'customer_details' => [
@@ -98,6 +100,12 @@ class OrderController extends Controller
             $order->snap_token = \Midtrans\Snap::getSnapToken($params);
             $order->save();
         });
+
+        $admins = User::where('role', 'admin')->get();
+
+        foreach ($admins as $admin) {
+            Mail::to($admin->email)->send(new NewOrderMail());
+        }
 
         return redirect()->route('show-payment', $order);
     }
@@ -152,7 +160,7 @@ class OrderController extends Controller
             // 6️⃣ BUAT ORDER ITEMS
             foreach ($carts as $cart) {
                 $order->items()->create([
-                    'product_id' => $cart->product->id,
+                    'product' => $cart->product->name,
                     'price'      => $cart->product->price,
                     'quantity'   => $cart->quantity,
                     'subtotal'   => $cart->product->price * $cart->quantity,

@@ -14,9 +14,7 @@ return new class extends Migration {
                   ->constrained()
                   ->cascadeOnDelete();
 
-            $table->foreignId('product_id')
-                  ->constrained()
-                  ->cascadeOnDelete();
+            $table->string('product');
 
             $table->integer('quantity')->default(1);
 
