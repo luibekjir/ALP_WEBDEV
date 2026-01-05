@@ -18,7 +18,7 @@
                     <th class="px-4 py-3 text-left">Alamat</th>
                     <th class="px-4 py-3 text-left">Kurir</th>
                     <th class="px-4 py-3 text-right">Total</th>
-                    <th class="px-4 py-3 text-center">Status</th>
+                    <th class="px-4 py-3 text-center">Pembayaran</th>
                     <th class="px-4 py-3 text-center">Tanggal</th>
                     <th class="px-4 py-3 text-center">Aksi</th>
                 </tr>

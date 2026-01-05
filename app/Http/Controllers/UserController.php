@@ -30,16 +30,16 @@ class UserController extends Controller
     {
         $user = Auth::user();
         $orders = $user->orders()
-        ->with(['items.product'])
-        ->latest()
-        ->get();
+            ->with(['items.product'])
+            ->latest()
+            ->get();
 
         $events = $user->events()
-    ->withPivot('registered_at')
-    ->orderByPivot('registered_at', 'desc')
-    ->get();
+            ->withPivot('registered_at')
+            ->orderByPivot('registered_at', 'desc')
+            ->get();
 
-    return view('profile', compact('user', 'orders', 'events'));
+        return view('profile', compact('user', 'orders', 'events'));
     }
     /**
      * Show the form for creating a new resource.

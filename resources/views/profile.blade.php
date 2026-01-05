@@ -1,9 +1,6 @@
 @extends('section.layout')
 
 @section('content')
-    <div>
-        <livewire:pricing-check />
-    </div>
     <!-- Header -->
     <div class="w-full bg-gradient-to-b from-[#F8D9DF] to-[#FFD6E0] py-14 text-center">
         <h1 class="text-4xl font-bold text-[#5F1D2A]">Profil Saya</h1>
@@ -133,9 +130,13 @@
                                             <p class="font-semibold text-[#5F1D2A]">
                                                 {{ $event->title }}
                                             </p>
-                                            <p class="text-sm text-[#5F1D2A]/60">
-                                                {{ $event->date?->format('d M Y, H:i') ?? 'Tanggal belum ditentukan' }}
-                                            </p>
+                                            @if ($event->start && $event->end)
+                                                {{ \Carbon\Carbon::parse($event->start)->format('d M Y H:i') }}
+                                                –
+                                                {{ \Carbon\Carbon::parse($event->end)->format('d M Y H:i') }}
+                                            @else
+                                                Jadwal belum ditentukan
+                                            @endif
                                         </div>
 
                                         {{-- STATUS --}}
@@ -148,10 +149,10 @@
 
                                     {{-- INFO --}}
                                     <div class="flex justify-between text-sm text-[#5F1D2A]/80">
-                                        <span>
+                                        {{-- <span>
                                             Daftar:
                                             {{ $event->pivot->registered_at ? \Carbon\Carbon::parse($event->pivot->registered_at)->format('d M Y') : '-' }}
-                                        </span>
+                                        </span> --}}
 
                                         <span class="font-semibold">
                                             @if ($event->price)

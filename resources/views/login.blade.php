@@ -184,10 +184,10 @@
 
                     <div class="helper-links">
                         <div class="helper-links-row">
-                            <label class="remember-me">
+                            {{-- <label class="remember-me">
                                 <input type="checkbox" name="remember">
-                                Ingat saya
-                            </label>
+                         Ingat saya
+                            </label> --}}
                             <a href="/forgot-password">Lupa password?</a>
                         </div>
                         <div class="helper-links-row">

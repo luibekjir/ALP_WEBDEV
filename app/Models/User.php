@@ -69,7 +69,9 @@ class User extends Authenticatable
     }
     public function events()
     {
-        return $this->belongsToMany(Event::class);
+        return $this->belongsToMany(Event::class)
+            ->withPivot('registered_at')
+            ->orderByPivot('registered_at', 'desc');
     }
 
 
@@ -77,10 +79,4 @@ class User extends Authenticatable
     // public function commentedGalleries(){
     //     return $this->belongsToMany(Gallery::class, 'gallery_comments');
     // }
-    
-    public function events()
-{
-    return $this->belongsToMany(Event::class)
-                ->withTimestamps();
-}
 }
