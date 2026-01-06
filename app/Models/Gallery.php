@@ -10,7 +10,7 @@ class Gallery extends Model
 
     Use HasFactory;
 
-    public $timestamps = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'image_url',

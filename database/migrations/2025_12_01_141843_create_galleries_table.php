@@ -20,7 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('updated_by')->nullable();
             $table->unsignedBigInteger('like_id')->nullable();
             $table->unsignedBigInteger('comment_id')->nullable();
-            // $table->timestamps();
+            $table->timestamps();
         });
     }
 
