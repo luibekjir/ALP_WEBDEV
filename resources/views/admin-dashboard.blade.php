@@ -20,7 +20,7 @@
                     <th class="px-4 py-3 text-right">Total</th>
                     <th class="px-4 py-3 text-center">Pembayaran</th>
                     <th class="px-4 py-3 text-center">Tanggal</th>
-                    <th class="px-4 py-3 text-center">Aksi</th>
+                    {{-- <th class="px-4 py-3 text-center">Aksi</th> --}}
                 </tr>
             </thead>
 
@@ -79,12 +79,12 @@
                             {{ $order->created_at->format('d M Y') }}
                         </td>
 
-                        <td class="px-4 py-3 text-center">
+                        {{-- <td class="px-4 py-3 text-center">
                             <a href="{{ route('orders.detail', $order) }}"
                                 class="text-[#5F1D2A] font-semibold hover:underline">
                                 Detail
                             </a>
-                        </td>
+                        </td> --}}
                     </tr>
                 @empty
                     <tr>

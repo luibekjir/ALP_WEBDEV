@@ -23,21 +23,12 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'password' => bcrypt('password'),
-            'remember_token' => Str::random(10),
-            'role' => 'admin', 
-        ]);
+
 
 DB::statement('PRAGMA foreign_keys=OFF;');
 
 $this->call([
     CategorySeeder::class,
-    ProductSeeder::class,
-    GallerySeeder::class,
-    EventSeeder::class,
     UserSeeder::class
 ]);
 

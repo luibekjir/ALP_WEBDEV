@@ -155,11 +155,5 @@ class CheckoutController extends Controller
         return redirect()->route('show-payment')->with('success', 'Checkout berhasil dikonfirmasi.');
     }
 
-    /**
-     * Simpan order
-     */
-    public function store(Request $request)
-    {
-        // nanti lanjut
-    }
+
 }

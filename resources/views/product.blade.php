@@ -46,26 +46,7 @@
                         }, 3000);
                     </script>
                 @endif
-                {{-- Sidebar Kategori --}}
-                {{-- <aside class="w-full lg:w-1/4">
-                    <div class="bg-white border border-[#B8A5A8] p-6 rounded-xl shadow-sm sticky top-8">
-                        {{-- <h3 class="text-xl font-semibold text-[#5F1D2A] mb-4 border-b border-[#B8A5A8]/30 pb-2">
-                            Kategori
-                        </h3>
-                        <ul class="space-y-3 text-[#5F1D2A]/80">
-                            <li><a href="#" class="hover:text-[#5F1D2A] hover:font-bold transition">Semua Koleksi</a>
-                            </li>
-                            <li><a href="#" class="hover:text-[#5F1D2A] hover:font-bold transition">Batik Tulis</a>
-                            </li>
-                            <li><a href="#" class="hover:text-[#5F1D2A] hover:font-bold transition">Batik Cap</a></li>
-                            <li><a href="#" class="hover:text-[#5F1D2A] hover:font-bold transition">Kemeja Pria</a>
-                            </li>
-                            <li><a href="#" class="hover:text-[#5F1D2A] hover:font-bold transition">Dress Wanita</a>
-                            </li>
-                        </ul> 
-                    </div>
-                </aside> --}}
-
+                
                 {{-- Main Content --}}
                 <main class="w-full lg:w-4/4 flex flex-col gap-6">
 
@@ -75,21 +56,6 @@
                             Menampilkan <span class="font-bold">{{ $products->count() }}</span> produk
                         </p>
 
-                        {{-- <form action="{{ url()->current() }}" method="GET" class="flex items-center gap-2">
-                            <label for="sort" class="text-[#5F1D2A] font-medium">Urutkan:</label>
-                            <select name="sort" id="sort" onchange="this.form.submit()"
-                                class="border border-[#B8A5A8] rounded-lg px-3 py-2 text-[#5F1D2A] focus:outline-none focus:ring-2 focus:ring-[#5F1D2A]/50 bg-white">
-                                <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
-                                <option value="price_low" {{ request('sort') == 'price_low' ? 'selected' : '' }}>Harga
-                                    Terendah</option>
-                                <option value="price_high" {{ request('sort') == 'price_high' ? 'selected' : '' }}>Harga
-                                    Tertinggi</option>
-                                <option value="name_az" {{ request('sort') == 'name_az' ? 'selected' : '' }}>Nama (A-Z)
-                                </option>
-                                <option value="name_za" {{ request('sort') == 'name_za' ? 'selected' : '' }}>Nama (Z-A)
-                                </option>
-                            </select>
-                        </form> --}}
                     </div>
 
                     {{-- Produk Grid --}}

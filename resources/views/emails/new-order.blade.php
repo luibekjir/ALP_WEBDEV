@@ -43,15 +43,6 @@
                             segera menindaklanjuti pesanan tersebut.
                         </p>
 
-                        {{-- <div style="text-align:center;">
-                            <a href="{{ url('/admin/orders') }}"
-                               style="display:inline-block; background:#5F1D2A; color:#ffffff;
-                               padding:12px 28px; border-radius:999px;
-                               text-decoration:none; font-weight:bold;">
-                                Buka Dashboard Admin
-                            </a>
-                        </div> --}}
-
                         <p style="margin-top:30px; font-size:13px; color:#6B7280;">
                             Email ini dikirim otomatis oleh sistem.<br>
                             Mohon tidak membalas email ini.

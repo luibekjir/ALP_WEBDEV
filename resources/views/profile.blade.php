@@ -108,23 +108,6 @@
                                 </div>
 
                             </div>
-
-
-                            {{-- <!-- Member Since -->
-                    <div>
-                        <label class="block text-sm font-semibold text-[#5F1D2A] mb-2">Bergabung Sejak</label>
-                        <div class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80">
-                            {{ $user->created_at ? \Carbon\Carbon::parse($user->created_at)->format('d M Y') : 'N/A' }}
-                        </div>
-                    </div>
-
-                    <!-- Last Updated -->
-                    <div>
-                        <label class="block text-sm font-semibold text-[#5F1D2A] mb-2">Terakhir Diubah</label>
-                        <div class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80">
-                            {{ $user->updated_at ? \Carbon\Carbon::parse($user->updated_at)->format('d M Y H:i') : 'N/A' }}
-                        </div>
-                    </div> --}}
                         </div>
 
                         <!-- Action Buttons -->
@@ -133,10 +116,6 @@
                                 class="flex-1 bg-[#5F1D2A] text-white px-6 py-3 rounded-lg hover:bg-[#4a1620] transition font-semibold text-center">
                                 Edit Profil
                             </button>
-                            {{-- <a href="{{ route('profile.change-password', $user->id) }}" 
-                       class="flex-1 border-2 border-[#5F1D2A] text-[#5F1D2A] px-6 py-3 rounded-lg hover:bg-[#F8D9DF] transition font-semibold text-center">
-                        Ubah Password
-                    </a> --}}
                             <form action="{{ route('logout') }}" method="POST" class="flex-1">
                                 @csrf
                                 <button type="submit"
@@ -256,20 +235,6 @@
                                             </span>
                                         </div>
 
-                                        {{-- ITEMS --}}
-                                        {{-- <div class="space-y-2 mb-4">
-                                        @foreach ($order->items as $item)
-                                            <div class="flex justify-between text-sm">
-                                                <span>
-                                                    {{ $item->product->name }} × {{ $item->quantity }}
-                                                </span>
-                                                <span>
-                                                    Rp {{ number_format($item->price * $item->quantity, 0, ',', '.') }}
-                                                </span>
-                                            </div>
-                                        @endforeach
-                                    </div> --}}
-
                                         {{-- TOTAL --}}
                                         <div class="flex justify-between items-center border-t pt-4">
                                             <span class="font-semibold text-[#5F1D2A]">
@@ -315,10 +280,6 @@
                                     <p class="font-semibold text-[#5F1D2A]">Password</p>
                                     <p class="text-sm text-[#5F1D2A]/70">Ubah password akun Anda</p>
                                 </div>
-                                {{-- <a href="{{ route('profile.change-password', $user) }}" 
-                           class="text-[#5F1D2A] hover:text-[#4a1620] font-semibold">
-                            Ubah
-                        </a> --}}
                                 <form action="{{ route('profile.change-password', $user) }}" method="POST">
                                     @csrf
                                     @method('PUT')
@@ -327,13 +288,6 @@
                                 </form>
                             </div>
 
-                            {{-- <div class="flex items-center justify-between p-4 bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg">
-                        <div>
-                            <p class="font-semibold text-[#5F1D2A]">Email</p>
-                            <p class="text-sm text-[#5F1D2A]/70">{{ $user->email }}</p>
-                        </div>
-                        {{-- <span class="text-green-600 font-semibold">✓ Terverifikasi</span> --}}
-                            {{-- </div> --}}
                         </div>
                     </div>
 
@@ -409,18 +363,6 @@
                                     <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
-
-                            <!-- Address -->
-                            {{-- <div>
-                                <label for="address" class="block text-sm font-semibold text-[#5F1D2A] mb-2">Alamat
-                                    Lengkap</label>
-                                {{-- <textarea id="address" name="address" rows="4"
-                                    class="w-full border border-[#B8A5A8]/30 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#FFD9DC] focus:border-transparent resize-none"
-                                    placeholder="Masukkan alamat lengkap Anda">{{ old('address', $user->address) }}</textarea>
-                                @error('address')
-                                    <div class="text-red-600 text-sm mt-1">{{ $message }}</div>
-                                @enderror --}}
-                            {{-- </div> --}}
 
                             <!-- Modal Footer -->
                             <div class="flex gap-3 pt-4 border-t border-[#B8A5A8]/20">

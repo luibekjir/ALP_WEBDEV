@@ -95,21 +95,7 @@
                                 </svg>
                                 Profile
                             </a>
-                            <!-- Dropdown Menu -->
-                            {{-- <div class="absolute left-0 mt-0 w-48 bg-white text-black rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto z-50">
-                        <a href="{{ route('profile.show', auth()->user()->id) }}" class="block px-4 py-3 hover:bg-[#FFD9DC] rounded-t-lg">
-                            👤 Lihat Profil
-                        </a>
-                        <a href="{{ route('profile.edit', auth()->user()->id) }}" class="block px-4 py-3 hover:bg-[#FFD9DC]">
-                            ✏️ Edit Profil
-                        </a>
-                        <form action="{{ route('logout') }}" method="POST" class="block">
-                            @csrf
-                            <button type="submit" class="w-full text-left px-4 py-3 hover:bg-[#FFD9DC] rounded-b-lg text-red-600 font-semibold">
-                                🚪 Logout
-                            </button>
-                        </form>
-                    </div> --}}
+
                         </li>
                     @else
                         <li class="relative group">

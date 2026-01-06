@@ -165,7 +165,7 @@ class OrderController extends Controller
             // 6️⃣ BUAT ORDER ITEMS
             foreach ($carts as $cart) {
                 $order->items()->create([
-                    'product_id' => $cart->product_id,
+                    'product' => $cart->product->name,
                     'price'      => $cart->product->price,
                     'quantity'   => $cart->quantity,
                 ]);
