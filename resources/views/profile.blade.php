@@ -280,7 +280,7 @@
                                     <p class="font-semibold text-[#5F1D2A]">Password</p>
                                     <p class="text-sm text-[#5F1D2A]/70">Ubah password akun Anda</p>
                                 </div>
-                                <form action="{{ route('profile.change-password', $user) }}" method="POST">
+                                <form action="{{ route('profile.change-password') }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <button type="submit" id="change-password"

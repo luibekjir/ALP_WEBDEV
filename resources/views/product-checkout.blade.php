@@ -84,8 +84,7 @@
             {{-- ===================== --}}
             {{-- FORM CHECKOUT --}}
             {{-- ===================== --}}
-            <form action="{{ route('orders.store') }}" method="POST"
-                class="bg-white rounded-xl shadow-md p-6 space-y-4">
+            <form action="{{ route('orders.store') }}" method="POST" class="bg-white rounded-xl shadow-md p-6 space-y-4">
                 @csrf
 
                 {{-- Jika dari cart --}}
@@ -131,10 +130,17 @@
                                 $parts[] = $defaultAddress->extra_detail;
                             }
                             if ($defaultAddress->subdistrict_name || $defaultAddress->district_name) {
-                                $parts[] = trim('Kel. ' . ($defaultAddress->subdistrict_name ?? '') . ', Kec. ' . ($defaultAddress->district_name ?? ''));
+                                $parts[] = trim(
+                                    'Kel. ' .
+                                        ($defaultAddress->subdistrict_name ?? '') .
+                                        ', Kec. ' .
+                                        ($defaultAddress->district_name ?? ''),
+                                );
                             }
                             if ($defaultAddress->city_name || $defaultAddress->province_name) {
-                                $parts[] = trim(($defaultAddress->city_name ?? '') . ', ' . ($defaultAddress->province_name ?? ''));
+                                $parts[] = trim(
+                                    ($defaultAddress->city_name ?? '') . ', ' . ($defaultAddress->province_name ?? ''),
+                                );
                             }
                             if ($defaultAddress->postal_code) {
                                 $parts[] = 'Kode Pos ' . $defaultAddress->postal_code;
@@ -144,8 +150,7 @@
                             $fullAddress = Auth::user()->address ?? null;
                         }
                     @endphp
-                    <input type="hidden" id="address" name="address"
-                        value="{{ old('address', $fullAddress) }}">
+                    <input type="hidden" id="address" name="address" value="{{ old('address', $fullAddress) }}">
                     <div id="selected-address-summary"
                         class="bg-[#FFF8F6] border border-[#B8A5A8]/30 rounded-lg px-4 py-3 text-[#5F1D2A]/80 space-y-1">
                         @if ($defaultAddress)
@@ -349,71 +354,72 @@
     <script>
         $(document).ready(function() {
 
-                    // Fungsi formatCurrency
-                    function formatCurrency(amount) {
-                        return new Intl.NumberFormat('id-ID', {
-                            style: 'currency',
-                            currency: 'IDR',
-                            minimumFractionDigits: 0,
-                            maximumFractionDigits: 0
-                        }).format(amount);
-                    }
+            // Fungsi formatCurrency
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('id-ID', {
+                    style: 'currency',
+                    currency: 'IDR',
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: 0
+                }).format(amount);
+            }
 
-                    // ajax check ongkir
-                    let isProcessing = false;
+            // ajax check ongkir
+            let isProcessing = false;
 
-                    $('.btn-check').click(function(e) {
-                        e.preventDefault();
+            $('.btn-check').click(function(e) {
+                e.preventDefault();
 
-                        if (isProcessing) return;
+                if (isProcessing) return;
 
-                      
-let token       = $("meta[name='csrf-token']").attr("content");
-// Ambil district_id dari hidden default address, bukan dari select
-let district_id = $('#district_id').val();
-let courier     = $('input[name=courier]:checked').val();
-let weight      = $('#weight').val();
 
-                        // Validasi form
-                        if (!district_id || !courier || !weight) {
-                            alert('Harap lengkapi semua data terlebih dahulu!');
-                            return;
-                        }
+                let token = $("meta[name='csrf-token']").attr("content");
+                // Ambil district_id dari hidden default address, bukan dari select
+                let district_id = $('#district_id').val();
+                let courier = $('input[name=courier]:checked').val();
+                let weight = $('#weight').val();
 
-                        isProcessing = true;
+                // Validasi form
+                if (!district_id || !courier || !weight) {
+                    alert('Harap lengkapi semua data terlebih dahulu!');
+                    return;
+                }
 
-                        // Tampilkan loading indicator
-                        $('#loading-indicator').show();
-                        $('.btn-check').prop('disabled', true);
-                        $('.btn-check').text('Memproses...');
+                isProcessing = true;
 
-                        $.ajax({
-                            url: "/check-ongkir",
-                            type: "POST",
-                            dataType: "JSON",
-                            data: {
-                                _token: token,
-                                district_id: district_id,
-                                courier: courier,
-                                weight: weight,
-                            },
-                            beforeSend: function() {
-                                // Sembunyikan hasil sebelumnya jika ada
-                                $('.results-container').addClass('hidden').removeClass('block');
-                            },
-                            success: function(response) {
-                                // kosongkan hasil lama & reset pilihan
-                                $('#results-ongkir').empty();
-                                $('#shipping_service').val('');
-                                $('#shipping_cost').val('');
-                                $('#shipping_etd').val('');
+                // Tampilkan loading indicator
+                $('#loading-indicator').show();
+                $('.btn-check').prop('disabled', true);
+                $('.btn-check').text('Memproses...');
 
-                                if (response && response.success && Array.isArray(response.data) && response.data.length) {
-                                    $('.results-container').removeClass('hidden').addClass('block');
+                $.ajax({
+                    url: "/check-ongkir",
+                    type: "POST",
+                    dataType: "JSON",
+                    data: {
+                        _token: token,
+                        district_id: district_id,
+                        courier: courier,
+                        weight: weight,
+                    },
+                    beforeSend: function() {
+                        // Sembunyikan hasil sebelumnya jika ada
+                        $('.results-container').addClass('hidden').removeClass('block');
+                    },
+                    success: function(response) {
+                        // kosongkan hasil lama & reset pilihan
+                        $('#results-ongkir').empty();
+                        $('#shipping_service').val('');
+                        $('#shipping_cost').val('');
+                        $('#shipping_etd').val('');
 
-                                    $.each(response.data, function(index, value) {
-                                        const optionId = `shipping_option_${index}`;
-                                        $('#results-ongkir').append(`
+                        if (response && response.success && Array.isArray(response.data) &&
+                            response.data.length) {
+                            $('.results-container').removeClass('hidden').addClass('block');
+
+                            $.each(response.data, function(index, value) {
+                                const optionId = `shipping_option_${index}`;
+                                $('#results-ongkir').append(`
                                             <label for="${optionId}" class="flex justify-between items-center p-3 bg-white rounded-xl shadow border border-gray-200 cursor-pointer hover:border-indigo-400 transition">
                                                 <div class="flex items-center gap-3">
                                                     <input type="radio"
@@ -431,72 +437,75 @@ let weight      = $('#weight').val();
                                                 <div class="text-base font-bold text-indigo-700">${formatCurrency(value.cost)}</div>
                                             </label>
                                         `);
-                                    });
-                                } else {
-                                    const msg = (response && response.message)
-                                        ? response.message
-                                        : 'Tidak ada data ongkir ditemukan.';
-
-                                    $('#results-ongkir').html(`<div class="text-center text-red-500">${msg}</div>`);
-                                    $('.results-container').removeClass('hidden').addClass('block');
-                                }
-                            },
-                            error: function(xhr, status, error) {
-                                console.error("Gagal menghitung ongkir:", error);
-                                $('#results-ongkir').html('<div class="text-center text-red-500">Terjadi kesalahan saat menghitung ongkir. Coba lagi.</div>');
-                                $('.results-container').removeClass('hidden').addClass('block');
-                            },
-                            complete: function() {
-                                // Sembunyikan loading indicator
-                                $('#loading-indicator').hide();
-                                $('.btn-check').prop('disabled', false);
-                                $('.btn-check').text('Hitung Ongkos Kirim');
-
-                                // pastikan tombol bisa diklik kembali
-                                isProcessing = false;
-                            }
-                        });
-                    });
-
-                    // Event: pilih salah satu opsi ongkir
-                    $(document).on('change', '.shipping-option', function() {
-                        const el = $(this);
-                        $('#shipping_service').val(el.data('service'));
-                        $('#shipping_cost').val(el.data('cost'));
-                        $('#shipping_etd').val(el.data('etd'));
-                    });
-
-                    function openAddressModal() {
-                        document.getElementById('addressModal').classList.remove('hidden');
-                    }
-
-                    function closeAddressModal() {
-                        document.getElementById('addressModal').classList.add('hidden');
-                    }
-
-                    function selectAddress(address) {
-                        // PATCH request to set as default
-                        fetch(`/address/${address.id}/set-default`, {
-                                method: 'PATCH',
-                                headers: {
-                                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
-                                        'content'),
-                                    'Accept': 'application/json',
-                                },
-                            })
-                            .then(response => {
-                                if (!response.ok) throw new Error('Gagal mengatur alamat default');
-                                return response.json().catch(() => ({}));
-                            })
-                            .then(data => {
-                                window.location.reload();
-                            })
-                            .catch(error => {
-                                alert(error.message);
-                                closeAddressModal();
                             });
-                    }
+                        } else {
+                            const msg = (response && response.message) ?
+                                response.message :
+                                'Tidak ada data ongkir ditemukan.';
 
+                            $('#results-ongkir').html(
+                                `<div class="text-center text-red-500">${msg}</div>`);
+                            $('.results-container').removeClass('hidden').addClass('block');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Gagal menghitung ongkir:", error);
+                        $('#results-ongkir').html(
+                            '<div class="text-center text-red-500">Terjadi kesalahan saat menghitung ongkir. Coba lagi.</div>'
+                            );
+                        $('.results-container').removeClass('hidden').addClass('block');
+                    },
+                    complete: function() {
+                        // Sembunyikan loading indicator
+                        $('#loading-indicator').hide();
+                        $('.btn-check').prop('disabled', false);
+                        $('.btn-check').text('Hitung Ongkos Kirim');
+
+                        // pastikan tombol bisa diklik kembali
+                        isProcessing = false;
+                    }
                 });
+            });
+
+            // Event: pilih salah satu opsi ongkir
+            $(document).on('change', '.shipping-option', function() {
+                const el = $(this);
+                $('#shipping_service').val(el.data('service'));
+                $('#shipping_cost').val(el.data('cost'));
+                $('#shipping_etd').val(el.data('etd'));
+            });
+
+            function openAddressModal() {
+                document.getElementById('addressModal').classList.remove('hidden');
+            }
+
+            function closeAddressModal() {
+                document.getElementById('addressModal').classList.add('hidden');
+            }
+
+            function selectAddress(address) {
+                // PATCH request to set as default
+                fetch(`/address/${address.id}/set-default`, {
+                        method: 'PATCH',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                                'content'),
+                            'Accept': 'application/json',
+                        },
+                    })
+                    .then(response => {
+                        if (!response.ok) throw new Error('Gagal mengatur alamat default');
+                        return response.json().catch(() => ({}));
+                    })
+                    .then(data => {
+                        window.location.reload();
+                    })
+                    .catch(error => {
+                        alert(error.message);
+                        closeAddressModal();
+                    });
+            }
+
+        });
     </script>
 @endsection
