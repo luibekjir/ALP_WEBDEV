@@ -5,7 +5,7 @@
     <div class="w-full bg-gradient-to-b from-[#F8D9DF] to-[#FFD6E0] py-16 text-center">
         <h1 class="text-5xl font-extrabold text-[#5F1D2A]">Koleksi Batik</h1>
         <p class="mt-4 text-[#5F1D2A]/80 max-w-3xl mx-auto px-4 text-lg">
-            Temukan keindahan motif yang menceritakan kisah tradisi dalam balutan modernitas.
+            T keindahan motif yang menceritakan kisah tradisi dalam balutan modernitas.
         </p>
     </div>
 
